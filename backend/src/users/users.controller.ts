@@ -24,20 +24,20 @@ export class UsersController {
   }
 
   @Get(':id')
-  read(@Param('id', new ParseIntPipe()) id) {
+  read(@Param('id', new ParseIntPipe()) id: number) {
     return this.usersService.read(+id);
   }
 
   @Patch(':id')
   update(
-    @Param('id', new ParseIntPipe()) id,
+    @Param('id', new ParseIntPipe()) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
-  delete(@Param('id', new ParseIntPipe()) id) {
+  delete(@Param('id', new ParseIntPipe()) id: number) {
     return this.usersService.delete(+id);
   }
 }

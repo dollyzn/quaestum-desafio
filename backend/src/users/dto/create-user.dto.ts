@@ -1,7 +1,6 @@
-import { User } from '../entities/user.entity';
 import { IsEmail, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class CreateUserDto extends User {
+export class CreateUserDto {
   /**
    * O nome do usuário.
    * @example 'Natã Santos'
