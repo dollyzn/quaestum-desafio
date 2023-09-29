@@ -40,15 +40,29 @@ export class UsersService {
     };
   }
 
+  async readAll() {
+    let users: User[];
+    try {
+      users = await this.prisma.user.findMany();
+    } catch (error) {
+      console.error(error.message);
+      throw new InternalServerErrorException('An error ocurred');
+    }
+
+    if (users.length == 0) {
+      throw new NotFoundException('Users not found');
+    }
+
+    return users;
+  }
+
   async read(id: number) {
     let user: User;
     try {
       user = await this.prisma.user.findUnique({ where: { id } });
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred searching the user',
-        error.message,
-      );
+      console.error(error.message);
+      throw new InternalServerErrorException('An error occurred');
     }
 
     if (!user) {
@@ -71,10 +85,8 @@ export class UsersService {
     try {
       user = await this.prisma.user.findUnique({ where: { id } });
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred searching the user',
-        error.message,
-      );
+      console.error(error.message);
+      throw new InternalServerErrorException('An error occurred');
     }
 
     if (!user) {
@@ -111,9 +123,8 @@ export class UsersService {
     try {
       user = await this.prisma.user.findUnique({ where: { id } });
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred searching the user',
-      );
+      console.error(error.message);
+      throw new InternalServerErrorException('An error occurred');
     }
 
     if (!user) {

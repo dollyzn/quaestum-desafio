@@ -23,6 +23,11 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get()
+  readAll() {
+    return this.usersService.readAll();
+  }
+
   @Get(':id')
   read(@Param('id', new ParseIntPipe()) id: number) {
     return this.usersService.read(+id);
