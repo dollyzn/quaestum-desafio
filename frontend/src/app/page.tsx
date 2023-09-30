@@ -21,9 +21,7 @@ export default function Home() {
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <Title>Usuários</Title>
-      <Text>
-        Lista dos usuários recuperados do banco de dados MySQL (NestJS Api)
-      </Text>
+      <Text>Listagem dos usuários</Text>
       <Card className="mt-6">
         <UsersTable users={users} />
       </Card>
