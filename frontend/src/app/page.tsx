@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getAllUsers, User } from "./api/userService";
+import { useEffect } from "react";
 import { Card, Title, Text } from "@tremor/react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers } from "@/redux/usersSlice";
+import { AppDispatch, RootState } from "@/redux/store";
 import UsersTable from "./table";
+import Error from "./error";
 
 export default function Home() {
-  const [users, setUsers] = useState<User[]>([]);
+  const users = useSelector((state: RootState) => state.users);
 
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    getAllUsers()
-      .then((data) => {
-        setUsers(data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar os usuários:", error);
-      });
+    dispatch(getAllUsers());
   }, []);
 
   return (
@@ -23,7 +21,11 @@ export default function Home() {
       <Title>Usuários</Title>
       <Text>Listagem dos usuários</Text>
       <Card className="mt-6">
-        <UsersTable users={users} />
+        {!users.loading && users.error ? (
+          <Error error={users.error}></Error>
+        ) : (
+          <UsersTable users={users.users} loading={users.loading} />
+        )}
       </Card>
     </main>
   );
