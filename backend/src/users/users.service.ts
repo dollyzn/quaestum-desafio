@@ -49,10 +49,6 @@ export class UsersService {
       throw new InternalServerErrorException('An error ocurred');
     }
 
-    if (users.length == 0) {
-      throw new NotFoundException('Users not found');
-    }
-
     return users;
   }
 
@@ -69,7 +65,7 @@ export class UsersService {
       throw new NotFoundException(`User with id #${id} not found`);
     }
 
-    return { success: true, data: user };
+    return { ...user };
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -131,8 +127,8 @@ export class UsersService {
       throw new NotFoundException(`User with id #${id} not found`);
     }
 
-    await this.prisma.user.delete({ where: { id } });
+    const deletedUser = await this.prisma.user.delete({ where: { id } });
 
-    return { success: true, message: `User #${id} deleted with success` };
+    return { ...deletedUser };
   }
 }
