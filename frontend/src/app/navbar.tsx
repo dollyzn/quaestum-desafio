@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
@@ -17,6 +17,7 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <Disclosure as="nav" className="bg-white dark:bg-gray-900 shadow-sm">
@@ -50,9 +51,11 @@ export default function Navbar() {
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {navigation.map((item) => (
-                    <a
+                    <button
                       key={item.name}
-                      href={item.href}
+                      onClick={(e) => {
+                        router.push(item.href);
+                      }}
                       className={classNames(
                         pathname === item.href
                           ? "border-slate-500 text-gray-900 dark:text-gray-400"
@@ -62,7 +65,7 @@ export default function Navbar() {
                       aria-current={pathname === item.href ? "page" : undefined}
                     >
                       {item.name}
-                    </a>
+                    </button>
                   ))}
                 </div>
               </div>
