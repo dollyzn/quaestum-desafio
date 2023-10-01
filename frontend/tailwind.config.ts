@@ -9,6 +9,13 @@ module.exports = {
     transparent: "transparent",
     current: "currentColor",
     extend: {
+      maxHeight: {
+        homeCard: "615px",
+        homeTable: "567px",
+        dashboardCard: "650px",
+        dashboardSection: "590px",
+        dashboardList: "440px",
+      },
       colors: {
         // light mode
         tremor: {

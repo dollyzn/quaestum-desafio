@@ -7,6 +7,7 @@ import {
   TableCell,
   Text,
 } from "@tremor/react";
+import Skeleton from "./skeleton";
 
 export default function UsersTable({
   users,
@@ -27,46 +28,52 @@ export default function UsersTable({
       <TableBody>
         <TableRow>
           <TableCell>
-            <div className="h-3 w-4/6 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
+            <Skeleton className="w-4/6" />
           </TableCell>
           <TableCell>
-            <div className="h-3 w-2/4 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
+            <Skeleton className="w-2/4" />
           </TableCell>
           <TableCell>
-            <div className="h-3 w-3/4 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <div className="h-3 w-4/5 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
-          </TableCell>
-          <TableCell>
-            <div className="h-3 w-1/4 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
-          </TableCell>
-          <TableCell>
-            <div className="h-3 w-2/4 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
+            <Skeleton className="w-3/4" />
           </TableCell>
         </TableRow>
         <TableRow>
           <TableCell>
-            <div className="h-3 w-4/6 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
+            <Skeleton className="w-4/5" />
           </TableCell>
           <TableCell>
-            <div className="h-3 w-2/4 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
+            <Skeleton className="w-1/4" />
           </TableCell>
           <TableCell>
-            <div className="h-3 w-4/5 bg-gray-200 rounded-full dark:bg-gray-700 animate-pulse"></div>{" "}
+            <Skeleton className="w-2/4" />
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Skeleton className="w-4/6" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="w-2/4" />
+          </TableCell>
+          <TableCell>
+            <Skeleton className="w-4/5" />
           </TableCell>
         </TableRow>
       </TableBody>
     </Table>
   ) : users.length ? (
-    <Table>
+    <Table className="max-h-homeTable pe-6">
       <TableHead>
         <TableRow>
-          <TableHeaderCell>Nome</TableHeaderCell>
-          <TableHeaderCell>Idade</TableHeaderCell>
-          <TableHeaderCell>Email</TableHeaderCell>
+          <TableHeaderCell className="bg-white dark:bg-gray-900">
+            Nome
+          </TableHeaderCell>
+          <TableHeaderCell className="bg-white dark:bg-gray-900">
+            Idade
+          </TableHeaderCell>
+          <TableHeaderCell className="bg-white dark:bg-gray-900">
+            Email
+          </TableHeaderCell>
         </TableRow>
       </TableHead>
       <TableBody>

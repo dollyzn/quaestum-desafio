@@ -20,7 +20,7 @@ export default function Dashboard() {
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <Title>Usuários</Title>
       <Text>Listar, criar, atualizar, ou excluir usuários </Text>
-      <Card className="mt-6">
+      <Card className="mt-6 max-h-dashboardCard">
         <UsersTab></UsersTab>
       </Card>
     </main>

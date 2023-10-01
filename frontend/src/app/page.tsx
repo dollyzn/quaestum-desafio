@@ -13,14 +13,16 @@ export default function Home() {
 
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
-    dispatch(getAllUsers());
+    if (!users.users.length || users.error) {
+      dispatch(getAllUsers());
+    }
   }, []);
 
   return (
     <main className="p-4 md:p-10 mx-auto max-w-7xl">
       <Title>Usuários</Title>
       <Text>Listagem dos usuários</Text>
-      <Card className="mt-6">
+      <Card className="mt-6 max-h-homeCard">
         {!users.loading && users.error ? (
           <Error error={users.error}></Error>
         ) : (

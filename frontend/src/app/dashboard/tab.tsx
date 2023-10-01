@@ -210,364 +210,346 @@ export default function UsersTab() {
       <TabList>
         {tabs.map((tabInfo, index) => (
           <Tab key={index} icon={tabInfo.icon} onClick={() => setTab(index)}>
-            {tabInfo.label}
+            <span className="max-[450px]:hidden">{tabInfo.label}</span>
           </Tab>
         ))}
       </TabList>
       <TabPanels>
         <TabPanel>
-          <div className="mt-10">
-            <section className="bg-white dark:bg-gray-900">
-              <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
-                <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-                  Listar usuários
-                </h2>
+          <section className="bg-white mt-10 dark:bg-gray-900 max-h-dashboardSection">
+            <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
+              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                Listar usuários
+              </h2>
 
-                {users.loading ? (
-                  <List>
-                    <ListItem>
-                      <Skeleton className="w-2/12" />
-                      <span>
-                        <Skeleton className="inline-flex w-6 h-4" />
-                        <Skeleton className="inline-flex w-6 h-4 ms-2" />
-                      </span>
-                    </ListItem>
-                    <ListItem>
-                      <Skeleton className="w-3/12" />
-                      <span>
-                        <Skeleton className="inline-flex w-6 h-4" />
-                        <Skeleton className="inline-flex w-6 h-4 ms-2" />
-                      </span>
-                    </ListItem>
-                    <ListItem>
-                      <Skeleton className="w-1/12" />
-                      <span>
-                        <Skeleton className="inline-flex w-6 h-4" />
-                        <Skeleton className="inline-flex w-6 h-4 ms-2" />
-                      </span>
-                    </ListItem>
-                  </List>
-                ) : users.users.length ? (
-                  <List>
-                    {users.users.map((user) => (
-                      <ListItem key={user.id}>
-                        <span>{user.name}</span>
+              {users.loading ? (
+                <List>
+                  <ListItem>
+                    <Skeleton className="w-2/12" />
+                    <span>
+                      <Skeleton className="inline-flex w-6 h-4" />
+                      <Skeleton className="inline-flex w-6 h-4 ms-2" />
+                    </span>
+                  </ListItem>
+                  <ListItem>
+                    <Skeleton className="w-3/12" />
+                    <span>
+                      <Skeleton className="inline-flex w-6 h-4" />
+                      <Skeleton className="inline-flex w-6 h-4 ms-2" />
+                    </span>
+                  </ListItem>
+                  <ListItem>
+                    <Skeleton className="w-1/12" />
+                    <span>
+                      <Skeleton className="inline-flex w-6 h-4" />
+                      <Skeleton className="inline-flex w-6 h-4 ms-2" />
+                    </span>
+                  </ListItem>
+                </List>
+              ) : users.users.length ? (
+                <List className="max-h-dashboardList overflow-auto pe-6">
+                  {users.users.map((user) => (
+                    <ListItem key={user.id}>
+                      <span>{user.name}</span>
 
-                        <span>
-                          {listActions.map((action) => (
-                            <Icon
-                              key={action.action}
-                              variant={"shadow"}
-                              size="xs"
-                              icon={action.icon}
-                              tooltip={action.tooltip}
-                              className={`ms-2 cursor-pointer`}
-                              onClick={() =>
-                                handleListAction(action.action, user.id)
-                              }
-                            />
-                          ))}
-                        </span>
-                      </ListItem>
-                    ))}
-                  </List>
-                ) : (
-                  <Card className="text-center dark:text-white  pb-10">
-                    {isHovered ? (
-                      <Icon
-                        size="xl"
-                        icon={FaceSmileIcon}
-                        tooltip="Está na hora de fazer o seu!"
-                        className="cursor-pointer"
-                        onClick={() => setTab(1)}
-                        onMouseLeave={() => setIsHovered(!isHovered)}
-                      />
-                    ) : (
-                      <Icon
-                        size="xl"
-                        icon={FaceFrownIcon}
-                        onMouseEnter={() => setIsHovered(!isHovered)}
-                      />
-                    )}
-                    <p>Nenhum usuário encontrado</p>
-                  </Card>
-                )}
-              </div>
-            </section>
-          </div>
+                      <span>
+                        {listActions.map((action) => (
+                          <Icon
+                            key={action.action}
+                            variant={"shadow"}
+                            size="xs"
+                            icon={action.icon}
+                            tooltip={action.tooltip}
+                            className={`ms-2 cursor-pointer`}
+                            onClick={() =>
+                              handleListAction(action.action, user.id)
+                            }
+                          />
+                        ))}
+                      </span>
+                    </ListItem>
+                  ))}
+                </List>
+              ) : (
+                <Card className="text-center dark:text-white  pb-10">
+                  {isHovered ? (
+                    <Icon
+                      size="xl"
+                      icon={FaceSmileIcon}
+                      tooltip="Está na hora de fazer o seu!"
+                      className="cursor-pointer"
+                      onClick={() => setTab(1)}
+                      onMouseLeave={() => setIsHovered(!isHovered)}
+                    />
+                  ) : (
+                    <Icon
+                      size="xl"
+                      icon={FaceFrownIcon}
+                      onMouseEnter={() => setIsHovered(!isHovered)}
+                    />
+                  )}
+                  <p>Nenhum usuário encontrado</p>
+                </Card>
+              )}
+            </div>
+          </section>
         </TabPanel>
         <TabPanel>
-          <div className="mt-10">
-            <section className="bg-white dark:bg-gray-900">
-              <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
-                <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-                  Adicionar usuário
-                </h2>
-                <form onSubmit={handleAddUser}>
-                  <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                    <div className="w-full">
-                      <label
-                        htmlFor="name"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Nome
-                      </label>
-                      <TextInput
-                        placeholder="Natã Santos"
-                        className="p-1"
-                        value={addName}
-                        onChange={(e) => setAddName(e.target.value)}
-                        error={Boolean(addformError.name)}
-                        errorMessage={addformError.name}
-                      />
-                    </div>
-
-                    <div className="w-full">
-                      <label
-                        htmlFor="age"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        Idade
-                      </label>
-                      <NumberInput
-                        placeholder="24"
-                        className="p-1"
-                        value={addAge}
-                        onChange={(e) => setAddAge(e.target.value)}
-                        error={Boolean(addformError.age)}
-                        errorMessage={addformError.age}
-                      />
-                    </div>
-
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor="email"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        E-mail
-                      </label>
-                      <TextInput
-                        placeholder="email@exemplo.com"
-                        className="p-1"
-                        value={addEmail}
-                        onChange={(e) => setAddEmail(e.target.value)}
-                        error={Boolean(addformError.email)}
-                        errorMessage={addformError.email}
-                      />
-                    </div>
+          <section className="mt-10 bg-white dark:bg-gray-900">
+            <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
+              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                Adicionar usuário
+              </h2>
+              <form onSubmit={handleAddUser}>
+                <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                  <div className="w-full">
+                    <label
+                      htmlFor="name"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Nome
+                    </label>
+                    <TextInput
+                      placeholder="Natã Santos"
+                      className="p-1"
+                      value={addName}
+                      onChange={(e) => setAddName(e.target.value)}
+                      error={Boolean(addformError.name)}
+                      errorMessage={addformError.name}
+                    />
                   </div>
 
-                  <Button
-                    loading={users.loading}
-                    className="mt-4 !text-white dark:!bg-blue-700 dark:!border-blue-700 dark:hover:!bg-blue-800 dark:hover:!border-blue-800"
-                    size="md"
-                  >
-                    Adicionar
-                  </Button>
-                </form>
-              </div>
-            </section>
-          </div>
+                  <div className="w-full">
+                    <label
+                      htmlFor="age"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Idade
+                    </label>
+                    <NumberInput
+                      placeholder="24"
+                      className="p-1"
+                      value={addAge}
+                      onChange={(e) => setAddAge(e.target.value)}
+                      error={Boolean(addformError.age)}
+                      errorMessage={addformError.age}
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="email"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      E-mail
+                    </label>
+                    <TextInput
+                      placeholder="email@exemplo.com"
+                      className="p-1"
+                      value={addEmail}
+                      onChange={(e) => setAddEmail(e.target.value)}
+                      error={Boolean(addformError.email)}
+                      errorMessage={addformError.email}
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  loading={users.loading}
+                  className="mt-4 !text-white dark:!bg-blue-700 dark:!border-blue-700 dark:hover:!bg-blue-800 dark:hover:!border-blue-800"
+                  size="md"
+                >
+                  Adicionar
+                </Button>
+              </form>
+            </div>
+          </section>
         </TabPanel>
         <TabPanel>
-          <div className="mt-10">
-            <div className="mt-10">
-              <section className="bg-white dark:bg-gray-900">
-                <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
-                  <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-                    Editar usuário
-                  </h2>
-                  <form onSubmit={handleEditUser}>
-                    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                      <div className="sm:col-span-2">
+          <section className="mt-10 bg-white dark:bg-gray-900">
+            <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
+              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                Editar usuário
+              </h2>
+              <form onSubmit={handleEditUser}>
+                <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="id"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Usuário
+                    </label>
+
+                    <SearchSelect
+                      value={
+                        selectedEditUserId ? selectedEditUserId.toString() : ""
+                      }
+                      disabled={users.loading}
+                      placeholder="Selecione o usuário"
+                      onValueChange={(value) =>
+                        setSelectedEditUserId(parseInt(value, 10))
+                      }
+                    >
+                      {users.users.map((user) => (
+                        <SearchSelectItem
+                          key={user.id}
+                          value={user.id.toString()}
+                        >
+                          {user.name}
+                        </SearchSelectItem>
+                      ))}
+                    </SearchSelect>
+                  </div>
+
+                  {selectedEditUserId && (
+                    <Card className="sm:col-span-2 grid gap-4 sm:grid-cols-2 sm:gap-6">
+                      <div className="w-full">
                         <label
-                          htmlFor="id"
+                          htmlFor="name"
                           className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                         >
-                          Usuário
+                          Nome
                         </label>
-
-                        <SearchSelect
-                          value={
-                            selectedEditUserId
-                              ? selectedEditUserId.toString()
-                              : ""
-                          }
+                        <TextInput
                           disabled={users.loading}
-                          placeholder="Selecione o usuário"
-                          onValueChange={(value) =>
-                            setSelectedEditUserId(parseInt(value, 10))
-                          }
-                        >
-                          {users.users.map((user) => (
-                            <SearchSelectItem
-                              key={user.id}
-                              value={user.id.toString()}
-                            >
-                              {user.name}
-                            </SearchSelectItem>
-                          ))}
-                        </SearchSelect>
+                          placeholder="Natã Santos"
+                          className="p-1"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          error={Boolean(editformError.name)}
+                          errorMessage={editformError.name}
+                        />
                       </div>
-
-                      {selectedEditUserId && (
-                        <Card className="sm:col-span-2 grid gap-4 sm:grid-cols-2 sm:gap-6">
-                          <div className="w-full">
-                            <label
-                              htmlFor="name"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                              Nome
-                            </label>
-                            <TextInput
-                              disabled={users.loading}
-                              placeholder="Natã Santos"
-                              className="p-1"
-                              value={editName}
-                              onChange={(e) => setEditName(e.target.value)}
-                              error={Boolean(editformError.name)}
-                              errorMessage={editformError.name}
-                            />
-                          </div>
-                          <div className="w-full">
-                            <label
-                              htmlFor="age"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                              Idade
-                            </label>
-                            <NumberInput
-                              disabled={users.loading}
-                              placeholder="24"
-                              className="p-1"
-                              value={editAge}
-                              onChange={(e) => setEditAge(e.target.value)}
-                              error={Boolean(editformError.age)}
-                              errorMessage={editformError.age}
-                            />
-                          </div>
-                          <div className="sm:col-span-2">
-                            <label
-                              htmlFor="email"
-                              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                            >
-                              E-mail
-                            </label>
-                            <TextInput
-                              disabled={users.loading}
-                              placeholder="email@exemplo.com"
-                              className="p-1"
-                              value={editEmail}
-                              onChange={(e) => setEditEmail(e.target.value)}
-                              error={Boolean(editformError.email)}
-                              errorMessage={editformError.email}
-                            />
-                          </div>
-                        </Card>
-                      )}
-                    </div>
-                    <Button
-                      disabled={Boolean(!selectedEditUserId)}
-                      loading={users.loading}
-                      className="mt-4 !text-white dark:!bg-blue-700 dark:!border-blue-700 dark:hover:!bg-blue-800 dark:hover:!border-blue-800"
-                      size="md"
-                    >
-                      Editar
-                    </Button>
-                  </form>
+                      <div className="w-full">
+                        <label
+                          htmlFor="age"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          Idade
+                        </label>
+                        <NumberInput
+                          disabled={users.loading}
+                          placeholder="24"
+                          className="p-1"
+                          value={editAge}
+                          onChange={(e) => setEditAge(e.target.value)}
+                          error={Boolean(editformError.age)}
+                          errorMessage={editformError.age}
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label
+                          htmlFor="email"
+                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >
+                          E-mail
+                        </label>
+                        <TextInput
+                          disabled={users.loading}
+                          placeholder="email@exemplo.com"
+                          className="p-1"
+                          value={editEmail}
+                          onChange={(e) => setEditEmail(e.target.value)}
+                          error={Boolean(editformError.email)}
+                          errorMessage={editformError.email}
+                        />
+                      </div>
+                    </Card>
+                  )}
                 </div>
-              </section>
+                <Button
+                  disabled={Boolean(!selectedEditUserId)}
+                  loading={users.loading}
+                  className="mt-4 !text-white dark:!bg-blue-700 dark:!border-blue-700 dark:hover:!bg-blue-800 dark:hover:!border-blue-800"
+                  size="md"
+                >
+                  Editar
+                </Button>
+              </form>
             </div>
-          </div>
+          </section>
         </TabPanel>
         <TabPanel>
-          <div className="mt-10">
-            <div className="mt-10">
-              <section className="bg-white dark:bg-gray-900">
-                <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
-                  <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-                    Excluir usuário
-                  </h2>
-                  <form onSubmit={handleDeleteUser}>
-                    <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                      <div className="sm:col-span-2">
-                        <label
-                          htmlFor="id"
-                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          Usuário
-                        </label>
-
-                        <SearchSelect
-                          value={
-                            selectedDeleteUserId
-                              ? selectedDeleteUserId.toString()
-                              : ""
-                          }
-                          disabled={users.loading}
-                          placeholder="Selecione o usuário"
-                          onValueChange={(value) =>
-                            setSelectedDeleteUserId(parseInt(value, 10))
-                          }
-                        >
-                          {users.users.map((user) => (
-                            <SearchSelectItem
-                              key={user.id}
-                              value={user.id.toString()}
-                            >
-                              {user.name}
-                            </SearchSelectItem>
-                          ))}
-                        </SearchSelect>
-                      </div>
-
-                      {selectedDeleteUserId && (
-                        <Card className="sm:col-span-2">
-                          <Table>
-                            <TableHead>
-                              <TableRow>
-                                <TableHeaderCell>Nome</TableHeaderCell>
-                                <TableHeaderCell>Idade</TableHeaderCell>
-                                <TableHeaderCell>E-mail</TableHeaderCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell>
-                                  {selectedDeleteUser?.name}
-                                </TableCell>
-                                <TableCell>{selectedDeleteUser?.age}</TableCell>
-                                <TableCell>
-                                  {selectedDeleteUser?.email}
-                                </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                          <Callout
-                            className="mt-4 dark:bg-red-950 dark:text-red-300"
-                            title="Exclusão de Usuário"
-                            icon={ExclamationTriangleIcon}
-                            color="rose"
-                          >
-                            Essa ação é irreversível e removerá permanentemente
-                            o acesso do usuário.
-                          </Callout>
-                        </Card>
-                      )}
-                    </div>
-                    <Button
-                      disabled={Boolean(!selectedDeleteUserId)}
-                      loading={users.loading}
-                      className="mt-4 !text-white dark:!bg-blue-700 dark:!border-blue-700 dark:hover:!bg-blue-800 dark:hover:!border-blue-800"
-                      size="md"
+          <section className="mt-10 bg-white dark:bg-gray-900">
+            <div className="pb-8 px-4 mx-auto max-w-2xl lg:pb-16">
+              <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
+                Excluir usuário
+              </h2>
+              <form onSubmit={handleDeleteUser}>
+                <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="id"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                     >
-                      Excluir
-                    </Button>
-                  </form>
+                      Usuário
+                    </label>
+
+                    <SearchSelect
+                      value={
+                        selectedDeleteUserId
+                          ? selectedDeleteUserId.toString()
+                          : ""
+                      }
+                      disabled={users.loading}
+                      placeholder="Selecione o usuário"
+                      onValueChange={(value) =>
+                        setSelectedDeleteUserId(parseInt(value, 10))
+                      }
+                    >
+                      {users.users.map((user) => (
+                        <SearchSelectItem
+                          key={user.id}
+                          value={user.id.toString()}
+                        >
+                          {user.name}
+                        </SearchSelectItem>
+                      ))}
+                    </SearchSelect>
+                  </div>
+
+                  {selectedDeleteUserId && (
+                    <Card className="sm:col-span-2">
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableHeaderCell>Nome</TableHeaderCell>
+                            <TableHeaderCell>Idade</TableHeaderCell>
+                            <TableHeaderCell>E-mail</TableHeaderCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>{selectedDeleteUser?.name}</TableCell>
+                            <TableCell>{selectedDeleteUser?.age}</TableCell>
+                            <TableCell>{selectedDeleteUser?.email}</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                      <Callout
+                        className="mt-4 dark:bg-red-950 dark:text-red-300"
+                        title="Exclusão de Usuário"
+                        icon={ExclamationTriangleIcon}
+                        color="rose"
+                      >
+                        Essa ação é irreversível e removerá permanentemente o
+                        acesso do usuário.
+                      </Callout>
+                    </Card>
+                  )}
                 </div>
-              </section>
+                <Button
+                  disabled={Boolean(!selectedDeleteUserId)}
+                  loading={users.loading}
+                  className="mt-4 !text-white dark:!bg-blue-700 dark:!border-blue-700 dark:hover:!bg-blue-800 dark:hover:!border-blue-800"
+                  size="md"
+                >
+                  Excluir
+                </Button>
+              </form>
             </div>
-          </div>
+          </section>
         </TabPanel>
       </TabPanels>
     </TabGroup>
