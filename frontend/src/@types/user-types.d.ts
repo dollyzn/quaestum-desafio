@@ -5,8 +5,4 @@ type User = {
   email: string;
 };
 
-type initialState = {
-  loading: boolean;
-  users: User[];
-  error: string;
-};
+type UserData = Omit<User, "id">;
