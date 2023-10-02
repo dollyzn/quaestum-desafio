@@ -2,14 +2,17 @@ import {
   Controller,
   Post,
   UseGuards,
-  Request,
   HttpCode,
   HttpStatus,
+  Res,
+  Req,
+  Get,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Response, Request } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { AuthService } from './auth.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { Public } from './decorators/is-public.decorator';
 
 @ApiTags('Autenticação')
@@ -47,7 +50,13 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
-  login(@Request() req: AuthRequest) {
-    return this.authService.login(req.user);
+  login(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
+    return this.authService.login(req.user, res);
+  }
+
+  @Get('logout')
+  @HttpCode(HttpStatus.OK)
+  logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return this.authService.signOut(req, res);
   }
 }

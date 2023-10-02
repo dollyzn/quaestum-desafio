@@ -1,15 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
-import { User } from 'src/users/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
-import { UserToken } from './models/UserToken';
+import { User } from 'src/users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -18,16 +14,31 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  login(user: User): UserToken {
-    const payload: UserPayload = {
-      sub: user.id,
-      email: user.email,
-      name: user.name,
-    };
-    const jwt = this.jwtService.sign(payload);
-    return {
-      token: jwt,
-    };
+  async login(user: User, res: Response): Promise<{ message: string }> {
+    try {
+      const payload: UserPayload = {
+        sub: user.id,
+        email: user.email,
+        name: user.name,
+      };
+
+      const jwt = this.jwtService.sign(payload);
+
+      res.cookie('token', jwt, {
+        httpOnly: true,
+        signed: true,
+      });
+
+      return { message: 'Login bem-sucedido' };
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      throw new Error('Falha ao fazer login');
+    }
+  }
+
+  async signOut(req: Request, res: Response): Promise<string> {
+    res.clearCookie('token');
+    return 'Logged out successfuly';
   }
 
   async signup(createUserDto: CreateUserDto) {
