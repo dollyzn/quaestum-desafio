@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Profile } from '@prisma/client';
-import { IsEmail, IsIn, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   /**
@@ -8,6 +8,7 @@ export class UpdateUserDto {
    * @example 'Sérgio Freitas'
    */
   @IsString()
+  @IsOptional()
   name?: string;
 
   /**
@@ -15,6 +16,7 @@ export class UpdateUserDto {
    * @example 40
    */
   @IsNumber()
+  @IsOptional()
   age?: number;
 
   /**
@@ -22,6 +24,7 @@ export class UpdateUserDto {
    * @example 'sergio@example.com'
    */
   @IsEmail()
+  @IsOptional()
   email?: string;
 
   /**
@@ -34,6 +37,7 @@ export class UpdateUserDto {
     description: 'O perfil do usuário: user, moderator ou admin.',
   })
   @IsString()
+  @IsOptional()
   @IsIn(['user', 'moderator', 'admin'], { message: 'invalid profile' })
   profile?: Profile;
 }
