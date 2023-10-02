@@ -1,5 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Request, Response } from 'express';
+import {
+  Injectable,
+  UnauthorizedException,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { Response, Request } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { UserPayload } from './models/UserPayload';
@@ -14,35 +18,44 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(user: User, res: Response): Promise<{ message: string }> {
-    try {
-      const payload: UserPayload = {
-        sub: user.id,
-        email: user.email,
-        name: user.name,
-      };
+  async signup(createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+  }
 
-      const jwt = this.jwtService.sign(payload);
+  async login(
+    user: User,
+    req: Request,
+    res: Response,
+  ): Promise<{ success: boolean; message: string }> {
+    try {
+      const cookieToken = req.signedCookies.token;
+
+      const jwt = cookieToken
+        ? this.refreshToken(cookieToken)
+        : this.generateToken(user);
 
       res.cookie('token', jwt, {
         httpOnly: true,
         signed: true,
       });
-
-      return { message: 'Login bem-sucedido' };
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      throw new Error('Falha ao fazer login');
+      throw new InternalServerErrorException('An error ocurred logging in');
     }
+
+    return { success: true, message: 'Logged in succesfully' };
   }
 
-  async signOut(req: Request, res: Response): Promise<string> {
-    res.clearCookie('token');
-    return 'Logged out successfuly';
-  }
-
-  async signup(createUserDto: CreateUserDto) {
-    const user = await this.userService.create(createUserDto);
+  async signOut(res: Response): Promise<{ success: boolean; message: string }> {
+    try {
+      res.clearCookie('token', {
+        httpOnly: true,
+        signed: true,
+      });
+      return { success: true, message: 'Logged out successfully' };
+    } catch (error) {
+      console.error('Error while clearing cookie:', error);
+      throw new InternalServerErrorException('An error ocurred logging out');
+    }
   }
 
   async validateUser(email: string, password: string) {
@@ -65,6 +78,29 @@ export class AuthService {
       ...user,
       password: undefined,
     };
+  }
+
+  refreshToken(token: string): string {
+    const isValid = this.jwtService.verify(token);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid token');
+    }
+
+    const payload = this.jwtService.decode(token);
+
+    const newToken = this.generateToken(payload as User);
+
+    return newToken;
+  }
+
+  generateToken(user: User) {
+    const payload: UserPayload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+    };
+
+    return this.jwtService.sign(payload);
   }
 
   async comparePasswords({

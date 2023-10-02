@@ -51,12 +51,12 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   login(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
-    return this.authService.login(req.user, res);
+    return this.authService.login(req.user, req, res);
   }
 
-  @Get('logout')
+  @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    return this.authService.signOut(req, res);
+  logout(@Res({ passthrough: true }) res: Response) {
+    return this.authService.signOut(res);
   }
 }
