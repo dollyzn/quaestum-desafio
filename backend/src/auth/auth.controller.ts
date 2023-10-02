@@ -10,6 +10,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { AuthService } from './auth.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { Public } from './decorators/is-public.decorator';
 
 @ApiTags('Autenticação')
 @Controller()
@@ -42,6 +43,7 @@ export class AuthController {
       },
     },
   })
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
