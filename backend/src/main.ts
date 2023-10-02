@@ -13,8 +13,10 @@ async function bootstrap() {
     .setTitle('Documentação da api quaestum Desafio')
     .setDescription('Desafio proposto para demonstração de habilidades')
     .setVersion('1.0')
-    .addTag('Users')
+    .addTag('Autenticação')
+    .addTag('Usuários')
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
