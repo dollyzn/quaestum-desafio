@@ -1,4 +1,6 @@
-import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Profile } from '@prisma/client';
+import { IsEmail, IsIn, IsNumber, IsString } from 'class-validator';
 
 export class UpdateUserDto {
   /**
@@ -21,4 +23,17 @@ export class UpdateUserDto {
    */
   @IsEmail()
   email?: string;
+
+  /**
+   * O perfil do usuário
+   * @example 'user'
+   */
+  @ApiProperty({
+    enum: Profile,
+    example: 'user',
+    description: 'O perfil do usuário: user, moderator ou admin.',
+  })
+  @IsString()
+  @IsIn(['user', 'moderator', 'admin'], { message: 'invalid profile' })
+  profile?: Profile;
 }

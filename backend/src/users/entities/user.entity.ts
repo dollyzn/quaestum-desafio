@@ -1,4 +1,5 @@
-import { Prisma } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
+import { Prisma, Profile } from '@prisma/client';
 
 export class User implements Prisma.UserUncheckedCreateInput {
   /**
@@ -6,6 +7,17 @@ export class User implements Prisma.UserUncheckedCreateInput {
    * @example 550e8400-e29b-41d4-a716-446655440000
    */
   id: string;
+
+  /**
+   * O perfil do usuário
+   * @example 'user'
+   */
+  @ApiProperty({
+    enum: Profile,
+    example: 'user',
+    description: 'O perfil do usuário: user, moderator ou admin.',
+  })
+  profile: Profile;
 
   /**
    * O nome do usuário.

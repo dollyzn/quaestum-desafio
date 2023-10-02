@@ -11,11 +11,18 @@ datasource db {
 }
 
 model User {
-  id    String        @unique @default(uuid()) @id 
-  email String        @unique
-  name  String
-  age   Int
-  password String
+  id        String    @unique @default(uuid()) @id 
+  email     String    @unique
+  profile   Profile	  @default(user)
+  name      String
+  age       Int
+  password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt()
+}
+
+enum Profile {
+  user
+  moderator
+  admin
 }
