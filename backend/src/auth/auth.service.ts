@@ -2,21 +2,26 @@ import {
   Injectable,
   UnauthorizedException,
   InternalServerErrorException,
+  Logger,
 } from '@nestjs/common';
-import { Response, Request } from 'express';
 import { UsersService } from 'src/users/users.service';
 import { UserPayload } from './models/UserPayload';
+import { UserFromJWT } from './models/UserFromJWT';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup-dto';
+import { Response } from 'express';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
+  logger: Logger;
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.logger = new Logger(AuthService.name);
+  }
 
   async signUp(
     signUpDto: SignUpDto,
@@ -32,21 +37,17 @@ export class AuthService {
 
   async login(
     user: User,
-    req: Request,
     res: Response,
   ): Promise<{ success: boolean; message: string }> {
     try {
-      const cookieToken = req.signedCookies.token;
-
-      const jwt = cookieToken
-        ? this.refreshToken(cookieToken)
-        : this.generateToken(user);
+      const jwt = this.generateToken(user);
 
       res.cookie('token', jwt, {
         httpOnly: true,
         signed: true,
       });
     } catch (error) {
+      this.logger.error('SignIn user failed: ' + error);
       throw new InternalServerErrorException(
         'An error ocurred while logging in',
       );
@@ -63,7 +64,7 @@ export class AuthService {
       });
       return { success: true, message: 'Logged out successfully' };
     } catch (error) {
-      console.error('Error while clearing cookie:', error);
+      this.logger.error('SignOut user failed: ' + error);
       throw new InternalServerErrorException(
         'An error ocurred while logging out',
       );
@@ -92,24 +93,40 @@ export class AuthService {
     };
   }
 
-  refreshToken(token: string): string {
-    const isValid = this.jwtService.verify(token);
-    if (!isValid) {
-      throw new UnauthorizedException('Invalid token');
+  refreshToken(
+    currentToken: string,
+    res: Response,
+  ): { success: boolean; message: string } {
+    try {
+      const currentPayload: UserPayload = this.jwtService.verify(currentToken);
+
+      const user: UserFromJWT = {
+        id: currentPayload.sub,
+        email: currentPayload.email,
+        name: currentPayload.name,
+        profile: currentPayload.profile,
+      };
+
+      const newToken = this.generateToken(user);
+
+      res.cookie('token', newToken, {
+        httpOnly: true,
+        signed: true,
+      });
+
+      return { success: true, message: 'Refresh token succesfully' };
+    } catch (error) {
+      this.logger.error('RefreshToken failed: ' + error);
+      throw new UnauthorizedException('Failed to refresh token');
     }
-
-    const payload = this.jwtService.decode(token);
-
-    const newToken = this.generateToken(payload as User);
-
-    return newToken;
   }
 
-  generateToken(user: User) {
+  generateToken(user: User | UserFromJWT) {
     const payload: UserPayload = {
       sub: user.id,
       email: user.email,
       name: user.name,
+      profile: user.profile,
     };
 
     return this.jwtService.sign(payload);

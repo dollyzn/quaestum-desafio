@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Profile } from '@prisma/client';
-import { IsEmail, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class UpdateUserDto {
   /**
@@ -28,8 +36,18 @@ export class UpdateUserDto {
   email?: string;
 
   /**
+   * A senha do usuário.
+   * @example '123123'
+   */
+  @IsNotEmpty()
+  @IsString()
+  @Length(3, 30)
+  @IsOptional()
+  password?: string;
+
+  /**
    * O perfil do usuário
-   * @example 'user'
+   * @example 'moderator'
    */
   @ApiProperty({
     enum: Profile,

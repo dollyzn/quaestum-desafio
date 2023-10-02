@@ -6,17 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiParam,
   ApiBody,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
+import { AuthRequest } from 'src/auth/models/AuthRequest';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @ApiTags('Usuários')
 @Controller('users')
@@ -29,7 +33,9 @@ export class UsersController {
    * @returns O usuário criado.
    */
   @Post()
+  @Roles('admin')
   @ApiOperation({ summary: 'Criar um novo usuário' })
+  @ApiCookieAuth('token')
   @ApiBody({
     type: CreateUserDto,
     description: 'Dados do usuário para criar um novo usuário',
@@ -45,6 +51,7 @@ export class UsersController {
    */
   @Get()
   @ApiOperation({ summary: 'Obter todos os usuários' })
+  @ApiCookieAuth('token')
   @ApiResponse({ status: 200, description: 'Lista de todos os usuários' })
   readAll() {
     return this.usersService.readAll();
@@ -57,15 +64,21 @@ export class UsersController {
    * @returns O usuário atualizado.
    */
   @Patch(':id')
+  @Roles('admin', 'moderator')
   @ApiOperation({ summary: 'Atualizar um usuário existente' })
+  @ApiCookieAuth('token')
   @ApiParam({ name: 'id', description: 'ID do usuário a ser atualizado' })
   @ApiBody({
     type: UpdateUserDto,
     description: 'Dados do usuário para atualizar um usuário existente',
   })
   @ApiResponse({ status: 200, description: 'Usuário atualizado com sucesso' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @Req() req: AuthRequest,
+  ) {
+    return this.usersService.update(id, updateUserDto, req.user);
   }
 
   /**
@@ -74,7 +87,9 @@ export class UsersController {
    * @returns O usuário excluído.
    */
   @Delete(':id')
+  @Roles('admin')
   @ApiOperation({ summary: 'Excluir um usuário existente' })
+  @ApiCookieAuth('token')
   @ApiParam({ name: 'id', description: 'ID do usuário a ser excluído' })
   @ApiResponse({ status: 200, description: 'Usuário excluído com sucesso' })
   delete(@Param('id') id: string) {

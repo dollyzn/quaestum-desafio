@@ -8,12 +8,18 @@ import {
   Req,
   Body,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiCookieAuth,
+} from '@nestjs/swagger';
+import { Request, Response } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup-dto';
-import { Response } from 'express';
 import { Public } from './decorators/is-public.decorator';
 
 @ApiTags('Autenticação')
@@ -87,7 +93,32 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   login(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
-    return this.authService.login(req.user, req, res);
+    return this.authService.login(req.user, res);
+  }
+
+  /**
+   * Atualizar o token JWT existente para estender a sessão do usuário.
+   * @param req Requisição HTTP recebida.
+   * @param res Resposta HTTP a ser retornada com o novo token no cookie.
+   * @returns Um novo token JWT é definido como um cookie na resposta.
+   */
+  @ApiOperation({
+    summary: 'Atualizar token JWT para estender a sessão do usuário',
+  })
+  @ApiCookieAuth('token')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description:
+      'Token JWT atualizado com sucesso e definido como um cookie na resposta',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Falha ao atualizar o token JWT',
+  })
+  @Post('/auth/refresh')
+  @HttpCode(HttpStatus.OK)
+  refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    return this.authService.refreshToken(req.signedCookies.token, res);
   }
 
   /**
@@ -95,6 +126,7 @@ export class AuthController {
    * @returns Uma mensagem indicando que o logout foi bem-sucedido.
    */
   @ApiOperation({ summary: 'Desconectar o usuário e limpar o cookie do token' })
+  @ApiCookieAuth('token')
   @ApiResponse({
     status: 200,
     description: 'Usuário desconectado com sucesso e cookie do token limpo',

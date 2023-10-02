@@ -53,7 +53,6 @@ export class CreateUserDto {
    * A senha do usuário.
    * @example '123123'
    */
-
   @IsNotEmpty()
   @IsString()
   @Length(3, 30)
