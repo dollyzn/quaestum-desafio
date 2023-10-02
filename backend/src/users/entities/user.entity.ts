@@ -27,7 +27,7 @@ export class User implements Prisma.UserUncheckedCreateInput {
 
   /**
    * A idade do usuário.
-   * @example 25
+   * @example 20
    */
   age: number;
 
@@ -39,7 +39,7 @@ export class User implements Prisma.UserUncheckedCreateInput {
 
   /**
    * A senha do usuário
-   * @example '123123'
+   * @example 'admin123'
    */
   password: string;
 

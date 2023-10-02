@@ -21,6 +21,34 @@ import { Public } from './decorators/is-public.decorator';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * Criar um novo usuário.
+   * @param signUpDto As informações do usuário a serem cadastradas.
+   * @returns Uma mensagem indicando que o usuário foi criado com sucesso.
+   */
+  @ApiOperation({ summary: 'Criar um novo usuário' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário criado com sucesso',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Requisição inválida ou dados do usuário em conflito',
+  })
+  @ApiBody({
+    type: SignUpDto,
+    description: 'Informações do usuário a serem cadastradas',
+    examples: {
+      user: {
+        summary: 'Informações do usuário',
+        description: 'Dados para criar um novo usuário',
+        value: {
+          email: 'nata@example.com',
+          password: 'admin123',
+        },
+      },
+    },
+  })
   @Public()
   @Post('signup')
   @HttpCode(HttpStatus.OK)
@@ -48,8 +76,8 @@ export class AuthController {
         summary: 'Credenciais',
         description: 'Email e senha do usuário',
         value: {
-          email: 'email@example.com',
-          password: '123123',
+          email: 'nata@example.com',
+          password: 'admin123',
         },
       },
     },
@@ -62,6 +90,15 @@ export class AuthController {
     return this.authService.login(req.user, req, res);
   }
 
+  /**
+   * Desconectar o usuário e limpar o cookie do token.
+   * @returns Uma mensagem indicando que o logout foi bem-sucedido.
+   */
+  @ApiOperation({ summary: 'Desconectar o usuário e limpar o cookie do token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuário desconectado com sucesso e cookie do token limpo',
+  })
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) res: Response) {

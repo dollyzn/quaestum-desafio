@@ -27,7 +27,7 @@ export class CreateUserDto {
 
   /**
    * O nome do usuário.
-   * @example 'Natã Santos'
+   * @example 'Lara Ester'
    */
   @IsString()
   @IsNotEmpty()
@@ -35,7 +35,7 @@ export class CreateUserDto {
 
   /**
    * A idade do usuário.
-   * @example 25
+   * @example 20
    */
   @IsNumber()
   @IsNotEmpty()
@@ -43,7 +43,7 @@ export class CreateUserDto {
 
   /**
    * O endereço de e-mail do usuário.
-   * @example 'nata@example.com'
+   * @example 'lara@example.com'
    */
   @IsEmail()
   @IsNotEmpty()

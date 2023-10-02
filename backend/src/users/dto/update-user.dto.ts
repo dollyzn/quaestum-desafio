@@ -5,7 +5,7 @@ import { IsEmail, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 export class UpdateUserDto {
   /**
    * Nome do usuário que será atualizado
-   * @example 'Sérgio Freitas'
+   * @example 'Anna Luisa'
    */
   @IsString()
   @IsOptional()
@@ -13,7 +13,7 @@ export class UpdateUserDto {
 
   /**
    * Idade do usuário que será atualizado
-   * @example 40
+   * @example 25
    */
   @IsNumber()
   @IsOptional()
@@ -21,7 +21,7 @@ export class UpdateUserDto {
 
   /**
    * Email do usuário que será atualizado
-   * @example 'sergio@example.com'
+   * @example 'anna@example.com'
    */
   @IsEmail()
   @IsOptional()
