@@ -3,9 +3,9 @@ import { Prisma } from '@prisma/client';
 export class User implements Prisma.UserUncheckedCreateInput {
   /**
    * O ID do usuário.
-   * @example 1
+   * @example 550e8400-e29b-41d4-a716-446655440000
    */
-  id: number;
+  id: string;
 
   /**
    * O nome do usuário.
@@ -24,4 +24,22 @@ export class User implements Prisma.UserUncheckedCreateInput {
    * @example 'nata@example.com'
    */
   email: string;
+
+  /**
+   * A senha do usuário
+   * @example '123123'
+   */
+  password: string;
+
+  /**
+   * A senha do usuário
+   * @example '2023-10-01 14:30:00'
+   */
+  createdAt: Date;
+
+  /**
+   * A senha do usuário
+   * @example '2023-10-01 15:30:00'
+   */
+  updatedAt: Date;
 }
