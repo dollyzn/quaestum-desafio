@@ -4,10 +4,10 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
+import { SignUpDto } from './dto/signup-dto';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 
@@ -18,8 +18,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup(createUserDto: CreateUserDto) {
-    const user = await this.userService.create(createUserDto);
+  async signUp(
+    signUpDto: SignUpDto,
+  ): Promise<{ success: boolean; message: string; data: { user?: User } }> {
+    const user = await this.userService.create(signUpDto);
+
+    return {
+      success: true,
+      message: 'User created successfully',
+      data: { user },
+    };
   }
 
   async login(
@@ -39,7 +47,9 @@ export class AuthService {
         signed: true,
       });
     } catch (error) {
-      throw new InternalServerErrorException('An error ocurred logging in');
+      throw new InternalServerErrorException(
+        'An error ocurred while logging in',
+      );
     }
 
     return { success: true, message: 'Logged in succesfully' };
@@ -54,7 +64,9 @@ export class AuthService {
       return { success: true, message: 'Logged out successfully' };
     } catch (error) {
       console.error('Error while clearing cookie:', error);
-      throw new InternalServerErrorException('An error ocurred logging out');
+      throw new InternalServerErrorException(
+        'An error ocurred while logging out',
+      );
     }
   }
 

@@ -6,19 +6,27 @@ import {
   HttpStatus,
   Res,
   Req,
-  Get,
+  Body,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { Response, Request } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthRequest } from './models/AuthRequest';
 import { AuthService } from './auth.service';
+import { SignUpDto } from './dto/signup-dto';
+import { Response } from 'express';
 import { Public } from './decorators/is-public.decorator';
 
 @ApiTags('Autenticação')
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Public()
+  @Post('signup')
+  @HttpCode(HttpStatus.OK)
+  signup(@Body() signUpDto: SignUpDto) {
+    return this.authService.signUp(signUpDto);
+  }
 
   /**
    * Autenticar o usuário e retornar o token JWT.

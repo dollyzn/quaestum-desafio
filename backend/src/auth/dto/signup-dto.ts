@@ -1,30 +1,12 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Profile } from '@prisma/client';
 import {
   IsEmail,
-  IsIn,
   IsNotEmpty,
   IsNumber,
-  IsOptional,
   IsString,
   Length,
 } from 'class-validator';
 
-export class CreateUserDto {
-  /**
-   * O perfil do usuário
-   * @example 'user'
-   */
-  @ApiProperty({
-    enum: Profile,
-    example: 'user',
-    description: 'O perfil do usuário: user, moderator ou admin.',
-  })
-  @IsString()
-  @IsOptional()
-  @IsIn(['user', 'moderator', 'admin'], { message: 'invalid profile' })
-  profile?: Profile;
-
+export class SignUpDto {
   /**
    * O nome do usuário.
    * @example 'Natã Santos'
