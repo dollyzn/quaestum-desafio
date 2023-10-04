@@ -1,8 +1,9 @@
-import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { ToastContainer, Slide } from "react-toastify";
 import { ReduxProvider } from "@/redux/provider";
-import NavBar from "./navbar";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,8 +23,12 @@ export default function RootLayout({
         className={`${inter.className} h-full bg-gray-100 dark:bg-gray-800`}
       >
         <ReduxProvider>
-          <NavBar></NavBar>
           {children}
+          <ToastContainer
+            autoClose={5000}
+            transition={Slide}
+            draggablePercent={40}
+          />
         </ReduxProvider>
       </body>
     </html>

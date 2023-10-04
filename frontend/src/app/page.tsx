@@ -7,6 +7,7 @@ import { getAllUsers } from "@/redux/usersSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 import UsersTable from "./table";
 import Error from "./error";
+import Navbar from "./navbar";
 
 export default function Home() {
   const users = useSelector((state: RootState) => state.users);
@@ -19,16 +20,19 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="p-4 md:p-10 mx-auto max-w-7xl">
-      <Title>Usuários</Title>
-      <Text>Listagem dos usuários</Text>
-      <Card className="mt-6 max-h-homeCard">
-        {!users.loading && users.error ? (
-          <Error error={users.error}></Error>
-        ) : (
-          <UsersTable users={users.users} loading={users.loading} />
-        )}
-      </Card>
-    </main>
+    <>
+      <Navbar />
+      <main className="p-4 md:p-10 mx-auto max-w-7xl">
+        <Title>Usuários</Title>
+        <Text>Listagem dos usuários</Text>
+        <Card className="mt-6 max-h-homeCard">
+          {!users.loading && users.error ? (
+            <Error error={users.error}></Error>
+          ) : (
+            <UsersTable users={users.users} loading={users.loading} />
+          )}
+        </Card>
+      </main>
+    </>
   );
 }

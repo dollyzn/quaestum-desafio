@@ -7,3 +7,11 @@ interface FormError {
   age: string;
   email: string;
 }
+
+interface SignUpFormError {
+  name: string;
+  age: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}

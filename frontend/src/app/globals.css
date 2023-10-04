@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --toastify-color-dark: #0c111d !important;
+}
+
 ::-webkit-scrollbar {
   width: 7px;
 }

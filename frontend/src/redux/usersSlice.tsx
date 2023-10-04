@@ -9,24 +9,21 @@ const initialState = {
 
 export const getAllUsers = createAsyncThunk("user/getAllUsers", async () => {
   return axios
-    .get<User[]>("http://localhost:3000/users")
+    .get<User[]>(`${process.env.BACKEND_URL}/users`)
     .then((response) => response.data);
 });
 
-export const addUser = createAsyncThunk(
-  "user/addUser",
-  async (userData: UserData) => {
-    return axios
-      .post<User>("http://localhost:3000/users", userData)
-      .then((response) => response.data);
-  }
-);
+export const addUser = createAsyncThunk("user/addUser", async () => {
+  return axios
+    .post<User>(`${process.env.BACKEND_URL}/users`)
+    .then((response) => response.data);
+});
 
 export const editUser = createAsyncThunk(
   "user/editUser",
-  async ({ id, userData }: { id: number; userData: UserData }) => {
+  async ({ id }: { id: number }) => {
     return axios
-      .patch<User>(`http://localhost:3000/users/${id}`, userData)
+      .patch<User>(`${process.env.BACKEND_URL}/users/${id}`)
       .then((response) => response.data);
   }
 );
@@ -35,7 +32,7 @@ export const deleteUser = createAsyncThunk(
   "user/deleteUser",
   async (id: number) => {
     return axios
-      .delete<User>(`http://localhost:3000/users/${id}`)
+      .delete<User>(`${process.env.BACKEND_URL}/users/${id}`)
       .then((response) => response.data);
   }
 );

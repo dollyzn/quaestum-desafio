@@ -80,9 +80,7 @@ export default function UsersTab() {
   >(undefined);
 
   const addOrEditUserSchema = Yup.object().shape({
-    name: Yup.string()
-      .required("Opa! Não esqueceu de digitar o nome, né?")
-      .min(2, "tese"),
+    name: Yup.string().required("Opa! Não esqueceu de digitar o nome, né?"),
     email: Yup.string()
       .email("Hmm, esse email parece estar estranho, tenta outro")
       .required("O email é obrigatório, não dá para pular essa."),
