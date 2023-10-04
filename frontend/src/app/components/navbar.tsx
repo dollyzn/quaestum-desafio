@@ -4,7 +4,6 @@ import { Fragment } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/redux/authSlice";
@@ -24,6 +23,12 @@ export default function Navbar() {
   const dispatch = useDispatch<AppDispatch>();
   const pathname = usePathname();
   const router = useRouter();
+
+  const isUser = auth.user ? auth.user.profile === "user" : false;
+
+  const visibleNavigation = navigation.filter((nav) => {
+    return !(nav.name === "Dashboard" && isUser);
+  });
 
   const handleLogout = async () => {
     const resultAction = await dispatch(logout());
@@ -59,7 +64,7 @@ export default function Navbar() {
                   />
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
-                  {navigation.map((item) => (
+                  {visibleNavigation.map((item) => (
                     <button
                       key={item.name}
                       onClick={(e) => {
@@ -138,7 +143,7 @@ export default function Navbar() {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 pt-2 pb-3">
-              {navigation.map((item) => (
+              {visibleNavigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
                   as="a"
@@ -158,10 +163,12 @@ export default function Navbar() {
             <div className="border-t border-gray-200 pt-4 pb-3">
               <div className="mt-3 space-y-1">
                 <button
-                  onClick={() => {}}
+                  onClick={() => {
+                    handleLogout();
+                  }}
                   className="flex w-full px-4 py-2 text-base font-medium  text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-800 dark:hover:text-gray-200"
                 >
-                  Sign in
+                  Sair
                 </button>
               </div>
             </div>
