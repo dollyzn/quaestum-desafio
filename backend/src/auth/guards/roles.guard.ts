@@ -1,10 +1,18 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import * as jwt from 'jsonwebtoken'; // Importa o pacote jsonwebtoken
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  logger: Logger;
+  constructor(private reflector: Reflector) {
+    this.logger = new Logger(RolesGuard.name);
+  }
 
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
@@ -29,7 +37,7 @@ export class RolesGuard implements CanActivate {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       return decoded;
     } catch (error) {
-      console.error('Erro ao decodificar o token:', error);
+      this.logger.error('RolesGuard error decoding token: ' + error);
       return null;
     }
   }

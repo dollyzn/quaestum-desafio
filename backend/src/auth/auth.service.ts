@@ -25,20 +25,44 @@ export class AuthService {
 
   async signUp(
     signUpDto: SignUpDto,
-  ): Promise<{ success: boolean; message: string; data: { user?: User } }> {
+    res: Response,
+  ): Promise<{
+    success: boolean;
+    message: string;
+    user: { name: string; profile: string };
+  }> {
     const user = await this.userService.create(signUpDto);
+
+    try {
+      const jwt = this.generateToken(user);
+
+      res.cookie('token', jwt, {
+        httpOnly: true,
+        signed: true,
+      });
+    } catch (error) {
+      this.logger.error('SignUp user failed: ' + error);
+      throw new InternalServerErrorException('An error ocurred while signUp');
+    }
 
     return {
       success: true,
       message: 'User created successfully',
-      data: { user },
+      user: {
+        name: user.name,
+        profile: user.profile,
+      },
     };
   }
 
   async login(
     user: User,
     res: Response,
-  ): Promise<{ success: boolean; message: string }> {
+  ): Promise<{
+    success: boolean;
+    message: string;
+    user: { name: string; profile: string };
+  }> {
     try {
       const jwt = this.generateToken(user);
 
@@ -53,7 +77,14 @@ export class AuthService {
       );
     }
 
-    return { success: true, message: 'Logged in succesfully' };
+    return {
+      success: true,
+      message: 'Logged in succesfully',
+      user: {
+        name: user.name,
+        profile: user.profile,
+      },
+    };
   }
 
   async signOut(res: Response): Promise<{ success: boolean; message: string }> {
@@ -96,7 +127,14 @@ export class AuthService {
   refreshToken(
     currentToken: string,
     res: Response,
-  ): { success: boolean; message: string } {
+  ): {
+    success: boolean;
+    message: string;
+    user: {
+      name: string;
+      profile: string;
+    };
+  } {
     try {
       const currentPayload: UserPayload = this.jwtService.verify(currentToken);
 
@@ -114,7 +152,14 @@ export class AuthService {
         signed: true,
       });
 
-      return { success: true, message: 'Refresh token succesfully' };
+      return {
+        success: true,
+        message: 'Refresh token succesfully',
+        user: {
+          name: user.name,
+          profile: user.profile,
+        },
+      };
     } catch (error) {
       this.logger.error('RefreshToken failed: ' + error);
       throw new UnauthorizedException('Failed to refresh token');

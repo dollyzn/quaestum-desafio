@@ -49,8 +49,10 @@ export class AuthController {
         summary: 'Informações do usuário',
         description: 'Dados para criar um novo usuário',
         value: {
-          email: 'nata@example.com',
-          password: 'admin123',
+          name: 'Lara Ester',
+          age: '22',
+          email: 'lara@example.com',
+          password: '123123',
         },
       },
     },
@@ -58,8 +60,11 @@ export class AuthController {
   @Public()
   @Post('signup')
   @HttpCode(HttpStatus.OK)
-  signup(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
+  signup(
+    @Res({ passthrough: true }) res: Response,
+    @Body() signUpDto: SignUpDto,
+  ) {
+    return this.authService.signUp(signUpDto, res);
   }
 
   /**

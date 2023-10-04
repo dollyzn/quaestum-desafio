@@ -146,6 +146,7 @@ export class UsersService {
     try {
       user = await this.prisma.user.findUnique({ where: { id } });
     } catch (error) {
+      this.logger.error('Delete service error searching for the user');
       throw new InternalServerErrorException('An error ocurred');
     }
 
