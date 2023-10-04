@@ -21,6 +21,7 @@ import { AuthRequest } from './models/AuthRequest';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup-dto';
 import { Public } from './decorators/is-public.decorator';
+import { RememberDto } from './dto/remember.dto';
 
 @ApiTags('Autenticação')
 @Controller()
@@ -97,8 +98,12 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
-  login(@Req() req: AuthRequest, @Res({ passthrough: true }) res: Response) {
-    return this.authService.login(req.user, res);
+  login(
+    @Req() req: AuthRequest,
+    @Res({ passthrough: true }) res: Response,
+    @Body() remember: RememberDto,
+  ) {
+    return this.authService.login(req.user, res, remember.remember);
   }
 
   /**

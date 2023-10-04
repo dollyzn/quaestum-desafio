@@ -20,6 +20,8 @@ export default function Login() {
   const [password, setPassword] = useState<string>("");
   const [formError, setFormError] = useState<Partial<SignUpFormError>>({});
 
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
+
   const loginSchema = Yup.object().shape({
     email: Yup.string()
       .email("Hmm, esse email parece estar estranho, tenta outro")
@@ -35,6 +37,7 @@ export default function Login() {
     const userData = {
       email: email.trim(),
       password: password,
+      remember: rememberMe,
     };
 
     try {
@@ -53,6 +56,10 @@ export default function Login() {
 
       if (login.fulfilled.match(resultAction)) {
         toast.success("Usuário autenticado com sucesso!", { theme: "dark" });
+
+        if (rememberMe) {
+          localStorage.setItem("rememberMe", "true");
+        }
 
         router.push("/");
       } else if (login.rejected.match(resultAction)) {
@@ -232,6 +239,10 @@ export default function Login() {
                         id="remember"
                         aria-describedby="remember"
                         type="checkbox"
+                        checked={rememberMe}
+                        onChange={() => {
+                          setRememberMe(!rememberMe);
+                        }}
                         className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
                       />
                     </div>
@@ -244,12 +255,6 @@ export default function Login() {
                       </label>
                     </div>
                   </div>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
-                  >
-                    Esqueceu a senha?
-                  </a>
                 </div>
 
                 <Button

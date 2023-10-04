@@ -58,13 +58,14 @@ export class AuthService {
   async login(
     user: User,
     res: Response,
+    remember: boolean,
   ): Promise<{
     success: boolean;
     message: string;
     user: { name: string; profile: string };
   }> {
     try {
-      const jwt = this.generateToken(user);
+      const jwt = this.generateToken(user, remember);
 
       res.cookie('token', jwt, {
         httpOnly: true,
@@ -166,7 +167,7 @@ export class AuthService {
     }
   }
 
-  generateToken(user: User | UserFromJWT) {
+  generateToken(user: User | UserFromJWT, remember?: boolean) {
     const payload: UserPayload = {
       sub: user.id,
       email: user.email,
@@ -174,7 +175,9 @@ export class AuthService {
       profile: user.profile,
     };
 
-    return this.jwtService.sign(payload);
+    return remember
+      ? this.jwtService.sign(payload, { expiresIn: '20d' })
+      : this.jwtService.sign(payload);
   }
 
   async comparePasswords({

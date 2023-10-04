@@ -6,6 +6,6 @@ interface initialState {
 
 interface initialAuthState {
   loading: boolean;
-  user: AuthUser | null;
+  user: UserData | null;
   error: string;
 }
