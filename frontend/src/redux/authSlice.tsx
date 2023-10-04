@@ -23,6 +23,11 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk("auth/logout", async () => {
+  const response = await api.post<Logout>(`/logout`);
+  return response.data;
+});
+
 export const refreshToken = createAsyncThunk("auth/refreshToken", async () => {
   const response = await api.post<AuthData>(`/auth/refresh`);
   return response.data.user;
@@ -65,6 +70,22 @@ const authSlice = createSlice({
       }
     );
     builder.addCase(login.rejected, (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.error = action.error.message || "Ocorreu um erro";
+    });
+
+    //logout actions
+    builder.addCase(logout.pending, (state) => {
+      state.loading = true;
+      state.error = "";
+    });
+    builder.addCase(logout.fulfilled, (state) => {
+      state.loading = false;
+      state.user = null;
+      state.error = "";
+    });
+    builder.addCase(logout.rejected, (state, action) => {
       state.loading = false;
       state.user = null;
       state.error = action.error.message || "Ocorreu um erro";

@@ -33,17 +33,21 @@ import {
   TableBody,
   TableCell,
   Table,
+  Select,
+  SelectItem,
 } from "@tremor/react";
-import Skeleton from "../skeleton";
+import Skeleton from "./skeleton";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, deleteUser, editUser } from "@/redux/usersSlice";
 import { AppDispatch, RootState } from "@/redux/store";
 
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 export default function UsersTab() {
   const users = useSelector((state: RootState) => state.users);
+  const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
 
   const tabs = [
@@ -52,6 +56,12 @@ export default function UsersTab() {
     { icon: ArrowPathIcon, label: "Atualizar" },
     { icon: TrashIcon, label: "Excluir" },
   ];
+
+  const isAdmin = auth.user ? auth.user.profile === "admin" : false;
+
+  const visibleTabs = tabs.filter((tabInfo) => {
+    return !(tabInfo.label === "Excluir" && !isAdmin);
+  });
 
   const listActions = [
     { action: "edit", tab: 2, icon: PencilIcon, tooltip: "Editar usuário" },
@@ -65,21 +75,25 @@ export default function UsersTab() {
   const [addName, setAddName] = useState<string>("");
   const [addAge, setAddAge] = useState<string>("");
   const [addEmail, setAddEmail] = useState<string>("");
+  const [addPassword, setAddPassword] = useState<string>("");
+  const [addProfile, setAddProfile] = useState<string>("");
   const [addformError, setAddFormError] = useState<Partial<FormError>>({});
 
   const [editName, setEditName] = useState<string>("");
   const [editAge, setEditAge] = useState<string>("");
   const [editEmail, setEditEmail] = useState<string>("");
+  const [editPassword, setEditPassword] = useState<string>("");
+  const [editProfile, setEditProfile] = useState<string>("");
   const [editformError, setEditFormError] = useState<Partial<FormError>>({});
-  const [selectedEditUserId, setSelectedEditUserId] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedEditUserId, setSelectedEditUserId] = useState<string>("");
 
-  const [selectedDeleteUserId, setSelectedDeleteUserId] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedDeleteUserId, setSelectedDeleteUserId] = useState<string>("");
 
-  const addOrEditUserSchema = Yup.object().shape({
+  const addUserSchema = Yup.object().shape({
+    profile: Yup.string().oneOf(
+      ["admin", "moderator", "user"],
+      'O perfil do usuário deve ser "Administrador", "Moderador" ou "Usuário"'
+    ),
     name: Yup.string().required("Opa! Não esqueceu de digitar o nome, né?"),
     email: Yup.string()
       .email("Hmm, esse email parece estar estranho, tenta outro")
@@ -88,9 +102,37 @@ export default function UsersTab() {
       .positive("Ei, a idade precisa ser maior ou igual a 1.")
       .required("A idade é importante, não deixe em branco!")
       .integer("Ops, a idade deve ser um número inteiro, sem casas decimais!"),
+    password: Yup.string()
+      .min(6, "A precisa ter pelo menos 6 caracteres, seja criativo!")
+      .max(
+        30,
+        "Essa senha é muito longa, tente uma com menos de 30 caracteres!"
+      )
+      .required("Oops! Não esqueceu de definir uma senha, certo?"),
   });
 
-  const handleListAction = (action: string, selectedId: number) => {
+  const editUserSchema = Yup.object().shape({
+    profile: Yup.string().oneOf(
+      ["admin", "moderator", "user"],
+      'O perfil do usuário deve ser "Administrador", "Moderador" ou "Usuário"'
+    ),
+    name: Yup.string().required("Opa! Não esqueceu de digitar o nome, né?"),
+    email: Yup.string()
+      .email("Hmm, esse email parece estar estranho, tenta outro")
+      .required("O email é obrigatório, não dá para pular essa."),
+    age: Yup.number()
+      .positive("Ei, a idade precisa ser maior ou igual a 1.")
+      .required("A idade é importante, não deixe em branco!")
+      .integer("Ops, a idade deve ser um número inteiro, sem casas decimais!"),
+    password: Yup.string()
+      .min(6, "A precisa ter pelo menos 6 caracteres, seja criativo!")
+      .max(
+        30,
+        "Essa senha é muito longa, tente uma com menos de 30 caracteres!"
+      ),
+  });
+
+  const handleListAction = (action: string, selectedId: string) => {
     switch (action) {
       case "edit":
         setSelectedEditUserId(selectedId);
@@ -107,27 +149,42 @@ export default function UsersTab() {
     e.preventDefault();
 
     const userData = {
+      profile: addProfile,
       name: addName.trim(),
       age: parseInt(addAge, 10),
       email: addEmail.trim(),
+      password: addPassword,
     };
 
     try {
-      await addOrEditUserSchema.validate(
+      await addUserSchema.validate(
         {
+          profile: addProfile,
           name: addName.trim(),
           age: parseInt(addAge || "0", 10),
           email: addEmail.trim(),
+          password: addPassword,
         },
         { abortEarly: false }
       );
       setAddFormError({});
 
-      await dispatch(addUser(userData));
+      const resultAction = await dispatch(addUser(userData));
 
-      setAddName("");
-      setAddAge("");
-      setAddEmail("");
+      if (addUser.fulfilled.match(resultAction)) {
+        toast.success("Usuário criado com sucesso!", { theme: "dark" });
+
+        setAddName("");
+        setAddAge("");
+        setAddEmail("");
+        setAddPassword("");
+      } else if (addUser.rejected.match(resultAction)) {
+        //TODO
+        switch (resultAction.error.message) {
+          case "":
+            break;
+        }
+      }
     } catch (error: any) {
       const errors: Errors = {};
 
@@ -145,24 +202,42 @@ export default function UsersTab() {
     e.preventDefault();
 
     const userData = {
+      profile: editProfile,
       name: editName.trim(),
       age: parseInt(editAge, 10),
       email: editEmail.trim(),
+      ...(editPassword ? { password: editPassword } : {}),
     };
 
     try {
-      await addOrEditUserSchema.validate(
+      await editUserSchema.validate(
         {
+          profile: editProfile,
           name: editName.trim(),
           age: parseInt(editAge || "0", 10),
           email: editEmail.trim(),
+          ...(editPassword ? { password: editPassword } : {}),
         },
         { abortEarly: false }
       );
       setEditFormError({});
 
-      await dispatch(editUser({ id: selectedEditUserId as number, userData }));
+      const resultAction = await dispatch(
+        editUser({ id: selectedEditUserId as string, userData })
+      );
+
+      if (editUser.fulfilled.match(resultAction)) {
+        toast.success("Usuário editado com sucesso!", { theme: "dark" });
+      } else if (editUser.rejected.match(resultAction)) {
+        //TODO
+        switch (resultAction.error.message) {
+          case "1":
+            break;
+        }
+      }
     } catch (error: any) {
+      console.log(error);
+
       const errors: Errors = {};
 
       if (error instanceof Yup.ValidationError) {
@@ -178,8 +253,21 @@ export default function UsersTab() {
   const handleDeleteUser = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    await dispatch(deleteUser(selectedDeleteUserId as number));
-    setSelectedDeleteUserId(undefined);
+    const resultAction = await dispatch(
+      deleteUser(selectedDeleteUserId as string)
+    );
+
+    if (deleteUser.fulfilled.match(resultAction)) {
+      toast.success("Usuário deletado com sucesso!", { theme: "dark" });
+
+      setSelectedDeleteUserId("");
+    } else if (deleteUser.rejected.match(resultAction)) {
+      //TODO
+      switch (resultAction.error.message) {
+        case "1":
+          break;
+      }
+    }
   };
 
   const selectedEditUser: User | undefined = users.users.find(
@@ -191,12 +279,14 @@ export default function UsersTab() {
   );
 
   useEffect(() => {
-    if (selectedEditUserId !== undefined && selectedEditUser) {
+    if (selectedEditUserId && selectedEditUser) {
+      setEditProfile(selectedEditUser.profile);
       setEditName(selectedEditUser.name);
       setEditAge(selectedEditUser.age.toString());
       setEditEmail(selectedEditUser.email);
     } else {
-      setSelectedEditUserId(undefined);
+      setSelectedEditUserId("");
+      setEditProfile("");
       setEditName("");
       setEditAge("");
       setEditEmail("");
@@ -206,7 +296,7 @@ export default function UsersTab() {
   return (
     <TabGroup index={tab}>
       <TabList>
-        {tabs.map((tabInfo, index) => (
+        {visibleTabs.map((tabInfo, index) => (
           <Tab key={index} icon={tabInfo.icon} onClick={() => setTab(index)}>
             <span className="max-[450px]:hidden">{tabInfo.label}</span>
           </Tab>
@@ -300,6 +390,25 @@ export default function UsersTab() {
               </h2>
               <form onSubmit={handleAddUser}>
                 <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+                  {auth.user && auth.user.profile === "admin" && (
+                    <div className="sm:col-span-2">
+                      <label
+                        htmlFor="password"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                      >
+                        Perfil
+                      </label>
+                      <Select
+                        value={addProfile}
+                        onValueChange={setAddProfile}
+                        placeholder="Selecione..."
+                      >
+                        <SelectItem value="admin">Administrador</SelectItem>
+                        <SelectItem value="moderator">Moderador</SelectItem>
+                        <SelectItem value="user">Usuário</SelectItem>
+                      </Select>
+                    </div>
+                  )}
                   <div className="w-full">
                     <label
                       htmlFor="name"
@@ -350,6 +459,23 @@ export default function UsersTab() {
                       errorMessage={addformError.email}
                     />
                   </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="password"
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >
+                      Senha
+                    </label>
+                    <TextInput
+                      placeholder="••••••••"
+                      className="p-1"
+                      value={addPassword}
+                      onChange={(e) => setAddPassword(e.target.value)}
+                      error={Boolean(addformError.password)}
+                      errorMessage={addformError.password}
+                    />
+                  </div>
                 </div>
 
                 <Button
@@ -380,20 +506,13 @@ export default function UsersTab() {
                     </label>
 
                     <SearchSelect
-                      value={
-                        selectedEditUserId ? selectedEditUserId.toString() : ""
-                      }
+                      value={selectedEditUserId}
                       disabled={users.loading}
                       placeholder="Selecione o usuário"
-                      onValueChange={(value) =>
-                        setSelectedEditUserId(parseInt(value, 10))
-                      }
+                      onValueChange={(value) => setSelectedEditUserId(value)}
                     >
                       {users.users.map((user) => (
-                        <SearchSelectItem
-                          key={user.id}
-                          value={user.id.toString()}
-                        >
+                        <SearchSelectItem key={user.id} value={user.id}>
                           {user.name}
                         </SearchSelectItem>
                       ))}
@@ -402,6 +521,26 @@ export default function UsersTab() {
 
                   {selectedEditUserId && (
                     <Card className="sm:col-span-2 grid gap-4 sm:grid-cols-2 sm:gap-6">
+                      {auth.user && auth.user.profile === "admin" && (
+                        <div className="sm:col-span-2">
+                          <label
+                            htmlFor="password"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Perfil
+                          </label>
+                          <Select
+                            value={editProfile}
+                            onValueChange={setEditProfile}
+                            placeholder="Selecione..."
+                          >
+                            <SelectItem value="admin">Administrador</SelectItem>
+                            <SelectItem value="moderator">Moderador</SelectItem>
+                            <SelectItem value="user">Usuário</SelectItem>
+                          </Select>
+                        </div>
+                      )}
+
                       <div className="w-full">
                         <label
                           htmlFor="name"
@@ -453,6 +592,25 @@ export default function UsersTab() {
                           errorMessage={editformError.email}
                         />
                       </div>
+
+                      {auth.user && auth.user.profile === "admin" && (
+                        <div className="sm:col-span-2">
+                          <label
+                            htmlFor="password"
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            Senha
+                          </label>
+                          <TextInput
+                            placeholder="••••••••"
+                            className="p-1"
+                            value={editPassword}
+                            onChange={(e) => setEditPassword(e.target.value)}
+                            error={Boolean(editformError.password)}
+                            errorMessage={editformError.password}
+                          />
+                        </div>
+                      )}
                     </Card>
                   )}
                 </div>
@@ -485,16 +643,10 @@ export default function UsersTab() {
                     </label>
 
                     <SearchSelect
-                      value={
-                        selectedDeleteUserId
-                          ? selectedDeleteUserId.toString()
-                          : ""
-                      }
+                      value={selectedDeleteUserId}
                       disabled={users.loading}
                       placeholder="Selecione o usuário"
-                      onValueChange={(value) =>
-                        setSelectedDeleteUserId(parseInt(value, 10))
-                      }
+                      onValueChange={(value) => setSelectedDeleteUserId(value)}
                     >
                       {users.users.map((user) => (
                         <SearchSelectItem

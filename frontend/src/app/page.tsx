@@ -5,9 +5,10 @@ import { Card, Title, Text } from "@tremor/react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers } from "@/redux/usersSlice";
 import { AppDispatch, RootState } from "@/redux/store";
-import UsersTable from "./table";
-import Error from "./error";
-import Navbar from "./navbar";
+import UsersTable from "./components/table";
+import Error from "./components/error";
+import Navbar from "./components/navbar";
+import PrivateRoute from "./components/privateRoute";
 
 export default function Home() {
   const users = useSelector((state: RootState) => state.users);
@@ -20,7 +21,7 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <PrivateRoute>
       <Navbar />
       <main className="p-4 md:p-10 mx-auto max-w-7xl">
         <Title>Usuários</Title>
@@ -33,6 +34,6 @@ export default function Home() {
           )}
         </Card>
       </main>
-    </>
+    </PrivateRoute>
   );
 }

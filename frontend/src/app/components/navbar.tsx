@@ -5,6 +5,10 @@ import { usePathname, useRouter } from "next/navigation";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/redux/authSlice";
+import { toast } from "react-toastify";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -16,8 +20,27 @@ function classNames(...classes: string[]) {
 }
 
 export default function Navbar() {
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
   const pathname = usePathname();
   const router = useRouter();
+
+  const handleLogout = async () => {
+    const resultAction = await dispatch(logout());
+
+    if (logout.fulfilled.match(resultAction)) {
+      router.push("/login");
+      toast.success("Usuário deslogado com sucesso!", { theme: "dark" });
+    } else if (logout.rejected.match(resultAction)) {
+      console.error("Erro no cadastro:", resultAction.error);
+
+      //TODO
+      switch (resultAction.error.message) {
+        case "1":
+          break;
+      }
+    }
+  };
 
   return (
     <Disclosure as="nav" className="bg-white dark:bg-gray-900 shadow-sm">
@@ -103,9 +126,11 @@ export default function Navbar() {
                               active ? "bg-gray-100 dark:bg-gray-700" : "",
                               "flex w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300"
                             )}
-                            onClick={() => {}}
+                            onClick={() => {
+                              handleLogout();
+                            }}
                           >
-                            Sign in
+                            Sair
                           </button>
                         )}
                       </Menu.Item>

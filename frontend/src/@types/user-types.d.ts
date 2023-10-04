@@ -27,7 +27,25 @@ interface AuthData {
   user: UserData;
 }
 
+interface Logout extends Omit<AuthData, "user"> {}
+
 interface UserData {
   name: string;
   profile: string;
+}
+
+interface CreateUser {
+  email: string;
+  name: string;
+  age: number;
+  profile?: string;
+  password: string;
+}
+
+interface UpdateUser {
+  email?: string;
+  name?: string;
+  age?: number;
+  profile?: string;
+  password?: string;
 }

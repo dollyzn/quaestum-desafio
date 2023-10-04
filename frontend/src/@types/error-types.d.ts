@@ -6,6 +6,8 @@ interface FormError {
   name: string;
   age: string;
   email: string;
+  password: string;
+  profile: string;
 }
 
 interface SignUpFormError {

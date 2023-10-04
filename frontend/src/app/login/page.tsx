@@ -52,7 +52,7 @@ export default function Login() {
       const resultAction = await dispatch(login(userData));
 
       if (login.fulfilled.match(resultAction)) {
-        toast.success("Usuário criado com sucesso!", { theme: "dark" });
+        toast.success("Usuário autenticado com sucesso!", { theme: "dark" });
 
         router.push("/");
       } else if (login.rejected.match(resultAction)) {

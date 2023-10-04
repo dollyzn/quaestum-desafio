@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import api from "./api";
 
 const initialState = {
   loading: true,
@@ -8,32 +8,30 @@ const initialState = {
 } as initialState;
 
 export const getAllUsers = createAsyncThunk("user/getAllUsers", async () => {
-  return axios
-    .get<User[]>(`${process.env.BACKEND_URL}/users`)
-    .then((response) => response.data);
+  return api.get<User[]>(`/users`).then((response) => response.data);
 });
 
-export const addUser = createAsyncThunk("user/addUser", async () => {
-  return axios
-    .post<User>(`${process.env.BACKEND_URL}/users`)
-    .then((response) => response.data);
-});
+export const addUser = createAsyncThunk(
+  "user/addUser",
+  async (userData: CreateUser) => {
+    const response = await api.post<User>("/users", userData);
+    return response.data;
+  }
+);
 
 export const editUser = createAsyncThunk(
   "user/editUser",
-  async ({ id }: { id: number }) => {
-    return axios
-      .patch<User>(`${process.env.BACKEND_URL}/users/${id}`)
-      .then((response) => response.data);
+  async ({ id, userData }: { id: string; userData: UpdateUser }) => {
+    const response = await api.patch<User>(`/users/${id}`, userData);
+    return response.data;
   }
 );
 
 export const deleteUser = createAsyncThunk(
   "user/deleteUser",
-  async (id: number) => {
-    return axios
-      .delete<User>(`${process.env.BACKEND_URL}/users/${id}`)
-      .then((response) => response.data);
+  async (id: string) => {
+    const response = await api.delete<User>(`/users/${id}`);
+    return response.data;
   }
 );
 
