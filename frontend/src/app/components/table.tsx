@@ -8,6 +8,9 @@ import {
   Text,
 } from "@tremor/react";
 import Skeleton from "./skeleton";
+import { format } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
+import ptBR from "date-fns/locale/pt-BR";
 
 export default function UsersTable({
   users,
@@ -16,13 +19,31 @@ export default function UsersTable({
   users: User[];
   loading: boolean;
 }) {
+  interface ProfileTranslations {
+    user: string;
+    admin: string;
+    moderator: string;
+  }
+
+  const profileTranslations: ProfileTranslations = {
+    user: "Usuário",
+    admin: "Administrador",
+    moderator: "Moderador",
+  };
+
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   return loading ? (
     <Table>
       <TableHead>
         <TableRow>
           <TableHeaderCell>Nome</TableHeaderCell>
+          <TableHeaderCell>Perfil</TableHeaderCell>
           <TableHeaderCell>Idade</TableHeaderCell>
           <TableHeaderCell>Email</TableHeaderCell>
+          <TableHeaderCell>Data de Criação</TableHeaderCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -36,27 +57,11 @@ export default function UsersTable({
           <TableCell>
             <Skeleton className="w-3/4" />
           </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <Skeleton className="w-4/5" />
-          </TableCell>
-          <TableCell>
-            <Skeleton className="w-1/4" />
-          </TableCell>
-          <TableCell>
-            <Skeleton className="w-2/4" />
-          </TableCell>
-        </TableRow>
-        <TableRow>
-          <TableCell>
-            <Skeleton className="w-4/6" />
-          </TableCell>
           <TableCell>
             <Skeleton className="w-2/4" />
           </TableCell>
           <TableCell>
-            <Skeleton className="w-4/5" />
+            <Skeleton className="w-2/4" />
           </TableCell>
         </TableRow>
       </TableBody>
@@ -69,10 +74,16 @@ export default function UsersTable({
             Nome
           </TableHeaderCell>
           <TableHeaderCell className="bg-white dark:bg-gray-900">
+            Profile
+          </TableHeaderCell>
+          <TableHeaderCell className="bg-white dark:bg-gray-900">
             Idade
           </TableHeaderCell>
           <TableHeaderCell className="bg-white dark:bg-gray-900">
             Email
+          </TableHeaderCell>
+          <TableHeaderCell className="bg-white dark:bg-gray-900">
+            Data de Criação
           </TableHeaderCell>
         </TableRow>
       </TableHead>
@@ -81,10 +92,26 @@ export default function UsersTable({
           <TableRow key={user.id}>
             <TableCell>{user.name}</TableCell>
             <TableCell>
+              {profileTranslations[user.profile as keyof ProfileTranslations]}
+            </TableCell>
+            <TableCell>
               <Text>{user.age}</Text>
             </TableCell>
             <TableCell>
               <Text>{user.email}</Text>
+            </TableCell>
+            <TableCell>
+              {user.createdAt && (
+                <Text>
+                  {capitalizeFirstLetter(
+                    format(
+                      utcToZonedTime(new Date(user.createdAt), "Etc/GMT+3"),
+                      "EEEE, dd/MM/yyyy 'às' HH:mm:ss",
+                      { locale: ptBR }
+                    )
+                  )}
+                </Text>
+              )}
             </TableCell>
           </TableRow>
         ))}
