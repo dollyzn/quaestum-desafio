@@ -15,7 +15,7 @@ const RestrictedRoute = ({ children }: { children: React.ReactNode }) => {
       setAllowed(false);
       router.push("/");
       toast.warning("Parece que você não pode entrar aqui", {
-        theme: "dark",
+        theme: "colored",
       });
     } else {
       setAllowed(true);

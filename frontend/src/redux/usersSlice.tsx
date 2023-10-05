@@ -4,7 +4,7 @@ import api from "./api";
 const initialState = {
   loading: true,
   users: [],
-  error: "",
+  error: null,
 } as initialState;
 
 export const getAllUsers = createAsyncThunk("user/getAllUsers", async () => {
@@ -48,13 +48,16 @@ const userSlice = createSlice({
       (state, action: PayloadAction<User[]>) => {
         state.loading = false;
         state.users = action.payload;
-        state.error = "";
+        state.error = null;
       }
     );
     builder.addCase(getAllUsers.rejected, (state, action) => {
       state.loading = false;
       state.users = [];
-      state.error = action.error.message || "Ocorreu um erro";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
 
     // addUser actions
@@ -64,12 +67,14 @@ const userSlice = createSlice({
     builder.addCase(addUser.fulfilled, (state, action: PayloadAction<User>) => {
       state.loading = false;
       state.users.push(action.payload);
-      state.error = "";
+      state.error = null;
     });
     builder.addCase(addUser.rejected, (state, action) => {
       state.loading = false;
-      state.error =
-        action.error.message || "Ocorreu um erro ao adicionar o usuário";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
 
     // editUser actions
@@ -86,13 +91,15 @@ const userSlice = createSlice({
           }
           return user;
         });
-        state.error = "";
+        state.error = null;
       }
     );
     builder.addCase(editUser.rejected, (state, action) => {
       state.loading = false;
-      state.error =
-        action.error.message || "Ocorreu um erro ao editar o usuário";
+      state.error = state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
 
     // deleteUser actions
@@ -106,13 +113,15 @@ const userSlice = createSlice({
         state.users = state.users.filter(
           (user) => user.id !== action.payload.id
         );
-        state.error = "";
+        state.error = null;
       }
     );
     builder.addCase(deleteUser.rejected, (state, action) => {
       state.loading = false;
-      state.error =
-        action.error.message || "Ocorreu um erro ao deletar o usuário";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
   },
 });

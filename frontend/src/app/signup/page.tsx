@@ -69,16 +69,39 @@ export default function SignUp() {
       const resultAction = await dispatch(signUp(SignUpData));
 
       if (signUp.fulfilled.match(resultAction)) {
-        toast.success("Usuário criado com sucesso!", { theme: "dark" });
+        toast.success("Usuário criado com sucesso!", { theme: "colored" });
 
         router.push("/");
       } else if (signUp.rejected.match(resultAction)) {
-        console.error("Erro no cadastro:", resultAction.error);
-
         switch (resultAction.error.message) {
           case "Request failed with status code 409":
             setFormError({
               email: "Eita! Esse e-mail já tá sendo usado, arruma outro aí!",
+            });
+            break;
+
+          case "Network Error":
+            toast.error(
+              "Falha ao conectar com o servidor, tente novamente mais tarde",
+              {
+                theme: "colored",
+              }
+            );
+
+            setFormError({
+              email: " ",
+              password: " ",
+            });
+            break;
+
+          default:
+            toast.error("Ocorreu um erro inesperado", {
+              theme: "colored",
+            });
+
+            setFormError({
+              email: " ",
+              password: " ",
             });
             break;
         }

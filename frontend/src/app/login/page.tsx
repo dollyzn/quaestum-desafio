@@ -55,21 +55,42 @@ export default function Login() {
       const resultAction = await dispatch(login(userData));
 
       if (login.fulfilled.match(resultAction)) {
-        toast.success("Usuário autenticado com sucesso!", { theme: "dark" });
-
-        if (rememberMe) {
-          localStorage.setItem("rememberMe", "true");
-        }
+        toast.success("Usuário autenticado com sucesso!", { theme: "colored" });
 
         router.push("/");
       } else if (login.rejected.match(resultAction)) {
-        console.error("Erro no cadastro:", resultAction.error);
+        console.log(resultAction.error.message);
 
         switch (resultAction.error.message) {
           case "Request failed with status code 401":
             setFormError({
               email:
                 "Ops! Parece que algo deu errado. Verifique seu e-mail e/ou senha e tente novamente.",
+              password: " ",
+            });
+            break;
+
+          case "Network Error":
+            toast.error(
+              "Falha ao conectar com o servidor, tente novamente mais tarde",
+              {
+                theme: "colored",
+              }
+            );
+
+            setFormError({
+              email: " ",
+              password: " ",
+            });
+            break;
+
+          default:
+            toast.error("Ocorreu um erro inesperado", {
+              theme: "colored",
+            });
+
+            setFormError({
+              email: " ",
               password: " ",
             });
             break;

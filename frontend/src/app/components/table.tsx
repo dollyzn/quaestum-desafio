@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableHead,
@@ -10,7 +12,11 @@ import {
 import Skeleton from "./skeleton";
 import { format } from "date-fns";
 import { utcToZonedTime } from "date-fns-tz";
+import { useRouter } from "next/navigation";
 import ptBR from "date-fns/locale/pt-BR";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { getAllUsers } from "@/redux/usersSlice";
 
 export default function UsersTable({
   users,
@@ -19,6 +25,9 @@ export default function UsersTable({
   users: User[];
   loading: boolean;
 }) {
+  const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+
   interface ProfileTranslations {
     user: string;
     admin: string;
@@ -140,33 +149,33 @@ export default function UsersTable({
         preocupe, continuaremos procurando. 🔍
       </div>
       <div className="flex">
-        <a href="/dashboard">
-          <button
-            type="button"
-            className="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        <button
+          onClick={() => router.push("/dashboard/1")}
+          type="button"
+          className="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-xs px-3 py-1.5 mr-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-6 h-6 me-2"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            Criar usuário
-          </button>
-        </a>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          Criar usuário
+        </button>
+
         <button
           type="button"
           className="text-blue-800 bg-transparent border border-blue-800 hover:bg-blue-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-200 font-medium rounded-lg text-xs px-3 py-1.5 text-center dark:hover:bg-blue-600 dark:border-blue-600 dark:text-blue-400 dark:hover:text-white dark:focus:ring-blue-800"
           onClick={() => {
-            window.location.reload();
+            dispatch(getAllUsers());
           }}
         >
           Tentar novamente

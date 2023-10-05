@@ -1,7 +1,7 @@
 interface initialState {
   loading: boolean;
   users: User[];
-  error: string;
+  error: ReduxError | null;
 }
 
 interface initialAuthState {

@@ -37,15 +37,9 @@ export default function Navbar() {
 
     if (logout.fulfilled.match(resultAction)) {
       router.push("/login");
-      toast.success("Usuário deslogado com sucesso!", { theme: "dark" });
+      toast.success("Usuário deslogado com sucesso!", { theme: "colored" });
     } else if (logout.rejected.match(resultAction)) {
-      console.error("Erro no cadastro:", resultAction.error);
-
-      //TODO
-      switch (resultAction.error.message) {
-        case "1":
-          break;
-      }
+      toast.error("Houve um erro ao encerrar a sessão", { theme: "colored" });
     }
   };
 

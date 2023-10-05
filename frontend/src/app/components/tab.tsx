@@ -45,7 +45,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 
-export default function UsersTab() {
+export default function UsersTab({ tabid }: { tabid?: number }) {
   const users = useSelector((state: RootState) => state.users);
   const auth = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
@@ -172,7 +172,7 @@ export default function UsersTab() {
       const resultAction = await dispatch(addUser(userData));
 
       if (addUser.fulfilled.match(resultAction)) {
-        toast.success("Usuário criado com sucesso!", { theme: "dark" });
+        toast.success("Usuário criado com sucesso!", { theme: "colored" });
 
         setAddName("");
         setAddAge("");
@@ -181,7 +181,10 @@ export default function UsersTab() {
       } else if (addUser.rejected.match(resultAction)) {
         //TODO
         switch (resultAction.error.message) {
-          case "":
+          case "email must be an email":
+            setAddFormError({
+              email: "Hmm, esse email parece estar estranho, tenta outro",
+            });
             break;
         }
       }
@@ -227,11 +230,13 @@ export default function UsersTab() {
       );
 
       if (editUser.fulfilled.match(resultAction)) {
-        toast.success("Usuário editado com sucesso!", { theme: "dark" });
+        toast.success("Usuário editado com sucesso!", { theme: "colored" });
       } else if (editUser.rejected.match(resultAction)) {
-        //TODO
         switch (resultAction.error.message) {
-          case "1":
+          case "email must be an email":
+            setEditFormError({
+              email: "Hmm, esse email parece estar estranho, tenta outro",
+            });
             break;
         }
       }
@@ -256,15 +261,11 @@ export default function UsersTab() {
     );
 
     if (deleteUser.fulfilled.match(resultAction)) {
-      toast.success("Usuário excluido com sucesso!", { theme: "dark" });
+      toast.success("Usuário excluido com sucesso!", { theme: "colored" });
 
       setSelectedDeleteUserId("");
     } else if (deleteUser.rejected.match(resultAction)) {
-      //TODO
-      switch (resultAction.error.message) {
-        case "1":
-          break;
-      }
+      toast.error("Ocorreu um erro ao excluir usuário", { theme: "colored" });
     }
   };
 
@@ -291,12 +292,16 @@ export default function UsersTab() {
     }
   }, [selectedEditUserId, selectedEditUser]);
 
+  useEffect(() => {
+    setTab(tabid || 0);
+  }, []);
+
   return (
     <TabGroup index={tab}>
       <TabList>
         {visibleTabs.map((tabInfo, index) => (
           <Tab key={index} icon={tabInfo.icon} onClick={() => setTab(index)}>
-            <span className="max-[450px]:hidden">{tabInfo.label}</span>
+            <span className="hidden sm:block">{tabInfo.label}</span>
           </Tab>
         ))}
       </TabList>

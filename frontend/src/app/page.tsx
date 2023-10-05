@@ -28,7 +28,7 @@ export default function Home() {
         <Text>Listagem dos usuários</Text>
         <Card className="mt-6 max-h-homeCard">
           {!users.loading && users.error ? (
-            <Error error={users.error}></Error>
+            <Error error={users.error.message}></Error>
           ) : (
             <UsersTable users={users.users} loading={users.loading} />
           )}
