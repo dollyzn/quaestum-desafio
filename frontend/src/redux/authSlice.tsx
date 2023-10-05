@@ -4,7 +4,7 @@ import api from "./api";
 const initialState = {
   loading: false,
   user: null,
-  error: "",
+  error: null,
 } as initialAuthState;
 
 export const signUp = createAsyncThunk(
@@ -40,74 +40,86 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(signUp.pending, (state) => {
       state.loading = true;
-      state.error = "";
+      state.error = null;
     });
     builder.addCase(
       signUp.fulfilled,
       (state, action: PayloadAction<UserData>) => {
         state.loading = false;
         state.user = action.payload;
-        state.error = "";
+        state.error = null;
       }
     );
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
       state.user = null;
-      state.error = action.error.message || "Ocorreu um erro";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
 
     //login actions
     builder.addCase(login.pending, (state) => {
       state.loading = true;
-      state.error = "";
+      state.error = null;
     });
     builder.addCase(
       login.fulfilled,
       (state, action: PayloadAction<UserData>) => {
         state.loading = false;
         state.user = action.payload;
-        state.error = "";
+        state.error = null;
       }
     );
     builder.addCase(login.rejected, (state, action) => {
       state.loading = false;
       state.user = null;
-      state.error = action.error.message || "Ocorreu um erro";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
 
     //logout actions
     builder.addCase(logout.pending, (state) => {
       state.loading = true;
-      state.error = "";
+      state.error = null;
     });
     builder.addCase(logout.fulfilled, (state) => {
       state.loading = false;
       state.user = null;
-      state.error = "";
+      state.error = null;
     });
     builder.addCase(logout.rejected, (state, action) => {
       state.loading = false;
       state.user = null;
-      state.error = action.error.message || "Ocorreu um erro";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
 
     //refresh token actions
     builder.addCase(refreshToken.pending, (state) => {
       state.loading = true;
-      state.error = "";
+      state.error = null;
     });
     builder.addCase(
       refreshToken.fulfilled,
       (state, action: PayloadAction<UserData>) => {
         state.loading = false;
         state.user = action.payload;
-        state.error = "";
+        state.error = null;
       }
     );
     builder.addCase(refreshToken.rejected, (state, action) => {
       state.loading = false;
       state.user = null;
-      state.error = action.error.message || "Ocorreu um erro";
+      state.error = {
+        message: action.error.message || "Ocorreu um erro",
+        code: action.error.code || "UNEXPECTED",
+      };
     });
   },
 });

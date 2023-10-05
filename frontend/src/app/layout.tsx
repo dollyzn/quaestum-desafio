@@ -28,6 +28,7 @@ export default function RootLayout({
             autoClose={5000}
             transition={Slide}
             draggablePercent={40}
+            limit={1}
           />
         </ReduxProvider>
       </body>

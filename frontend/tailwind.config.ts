@@ -9,6 +9,9 @@ module.exports = {
     transparent: "transparent",
     current: "currentColor",
     extend: {
+      screens: {
+        "mdh-screen": { raw: "(min-height: 760px)" },
+      },
       maxHeight: {
         homeCard: "615px",
         homeTable: "567px",

@@ -7,5 +7,5 @@ interface initialState {
 interface initialAuthState {
   loading: boolean;
   user: UserData | null;
-  error: string;
+  error: ReduxError | null;
 }

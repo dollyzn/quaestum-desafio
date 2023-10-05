@@ -262,10 +262,10 @@
   dependencies:
     mini-svg-data-uri "^1.2.3"
 
-"@tremor/react@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.npmjs.org/@tremor/react/-/react-3.8.1.tgz"
-  integrity sha512-nUQRmrUNnhTyxig6h717GRAqgwtKKHZGSx75fX37ILwS8wEnL0XJlIpMNQmN8j2hIPADX8wIL9Qvi1hVf6F0Nw==
+"@tremor/react@3.9.0-beta.4":
+  version "3.9.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@tremor/react/-/react-3.9.0-beta.4.tgz#23af9582668ab9390b12dac0b41bcc53d24889df"
+  integrity sha512-mHKdh3HrIWJvG+nq2PPXJU1L5RYLVaCFSOKqd56pT+a79WFSwTrcYMJWfT7hZyPN5EL9H2EFW541hL6lk1BXrA==
   dependencies:
     "@floating-ui/react" "^0.19.1"
     "@headlessui/react" "^1.7.14"

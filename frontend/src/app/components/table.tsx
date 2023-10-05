@@ -74,7 +74,7 @@ export default function UsersTable({
             Nome
           </TableHeaderCell>
           <TableHeaderCell className="bg-white dark:bg-gray-900">
-            Profile
+            Perfil
           </TableHeaderCell>
           <TableHeaderCell className="bg-white dark:bg-gray-900">
             Idade

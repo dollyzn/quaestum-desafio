@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -10,8 +10,8 @@ import { logout } from "@/redux/authSlice";
 import { toast } from "react-toastify";
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Dashboard", href: "/dashboard" },
+  { name: "Início", href: "/" },
+  { name: "Painel de Controle", href: "/dashboard" },
 ];
 
 function classNames(...classes: string[]) {
@@ -25,6 +25,8 @@ export default function Navbar() {
   const router = useRouter();
 
   const isUser = auth.user ? auth.user.profile === "user" : false;
+
+  const [user, setUser] = useState<UserData | null>(null);
 
   const visibleNavigation = navigation.filter((nav) => {
     return !(nav.name === "Dashboard" && isUser);
@@ -47,6 +49,10 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    setUser(auth.user);
+  }, []);
+
   return (
     <Disclosure as="nav" className="bg-white dark:bg-gray-900 shadow-sm">
       {({ open }) => (
@@ -55,13 +61,15 @@ export default function Navbar() {
             <div className="flex h-16 justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    src="/logo.png"
-                    className="rounded-full border border-gray-600"
-                    width="32"
-                    height="32"
-                    alt="Logo"
-                  />
+                  <a href="https://quaestum.com.br">
+                    <img
+                      src="/logo.png"
+                      className="rounded-full border border-gray-600"
+                      width="32"
+                      height="32"
+                      alt="Logo"
+                    />
+                  </a>
                 </div>
                 <div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                   {visibleNavigation.map((item) => (
@@ -91,7 +99,7 @@ export default function Navbar() {
                       <img
                         className="h-8 w-8 rounded-full border border-blue-400"
                         src={`https://api.dicebear.com/6.x/thumbs/svg?scale=70&seed=${
-                          auth.user ? auth.user.name.split(" ")[0] : ""
+                          user ? user.name.split(" ")[0] : ""
                         }`}
                         height={32}
                         width={32}
@@ -129,7 +137,7 @@ export default function Navbar() {
                 </Menu>
               </div>
               <div className="-mr-2 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md bg-white dark:bg-gray-900 p-2 text-gray-400 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-500 dark:hover:text-gray-100 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XMarkIcon className="block h-6 w-6" aria-hidden="true" />

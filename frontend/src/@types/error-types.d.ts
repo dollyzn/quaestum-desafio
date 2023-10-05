@@ -17,3 +17,8 @@ interface SignUpFormError {
   password: string;
   confirmPassword: string;
 }
+
+interface ReduxError {
+  message: string;
+  code: string;
+}

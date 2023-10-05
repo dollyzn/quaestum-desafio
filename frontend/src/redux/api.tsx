@@ -5,4 +5,19 @@ const api = axios.create({
   withCredentials: true,
 });
 
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response.status === 401) {
+      error.code = "UNAUTHORIZED";
+    } else {
+      console.error("Erro inesperado:", error.message);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;

@@ -258,7 +258,7 @@ export default function UsersTab() {
     );
 
     if (deleteUser.fulfilled.match(resultAction)) {
-      toast.success("Usuário deletado com sucesso!", { theme: "dark" });
+      toast.success("Usuário excluido com sucesso!", { theme: "dark" });
 
       setSelectedDeleteUserId("");
     } else if (deleteUser.rejected.match(resultAction)) {
@@ -436,6 +436,7 @@ export default function UsersTab() {
                     <NumberInput
                       placeholder="24"
                       className="p-1"
+                      min={1}
                       value={addAge}
                       onChange={(e) => setAddAge(e.target.value)}
                       error={Boolean(addformError.age)}
@@ -468,6 +469,7 @@ export default function UsersTab() {
                       Senha
                     </label>
                     <TextInput
+                      type="password"
                       placeholder="••••••••"
                       className="p-1"
                       value={addPassword}
@@ -569,6 +571,7 @@ export default function UsersTab() {
                           disabled={users.loading}
                           placeholder="24"
                           className="p-1"
+                          min={1}
                           value={editAge}
                           onChange={(e) => setEditAge(e.target.value)}
                           error={Boolean(editformError.age)}
@@ -602,6 +605,7 @@ export default function UsersTab() {
                             Senha
                           </label>
                           <TextInput
+                            type="password"
                             placeholder="••••••••"
                             className="p-1"
                             value={editPassword}
@@ -660,7 +664,7 @@ export default function UsersTab() {
                   </div>
 
                   {selectedDeleteUserId && (
-                    <Card className="sm:col-span-2">
+                    <Card className="sm:col-span-2 overflow-auto">
                       <Table>
                         <TableHead>
                           <TableRow>
