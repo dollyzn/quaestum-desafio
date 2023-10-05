@@ -40,7 +40,15 @@ export class AuthController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Requisição inválida ou dados do usuário em conflito',
+    description: 'Requisição inválida',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Dados do usuário em conflito',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erro interno do servidor',
   })
   @ApiBody({
     type: SignUpDto,
@@ -81,6 +89,10 @@ export class AuthController {
     status: 401,
     description: 'O email ou a senha fornecidos estão incorretos',
   })
+  @ApiResponse({
+    status: 500,
+    description: 'Erro interno do servidor',
+  })
   @ApiBody({
     description: 'Credenciais do usuário (email e senha)',
     examples: {
@@ -117,12 +129,12 @@ export class AuthController {
   })
   @ApiCookieAuth('token')
   @ApiResponse({
-    status: HttpStatus.OK,
+    status: 200,
     description:
       'Token JWT atualizado com sucesso e definido como um cookie na resposta',
   })
   @ApiResponse({
-    status: HttpStatus.UNAUTHORIZED,
+    status: 401,
     description: 'Falha ao atualizar o token JWT',
   })
   @Post('/auth/refresh')
@@ -140,6 +152,10 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'Usuário desconectado com sucesso e cookie do token limpo',
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Erro interno do servidor',
   })
   @Post('logout')
   @HttpCode(HttpStatus.OK)
