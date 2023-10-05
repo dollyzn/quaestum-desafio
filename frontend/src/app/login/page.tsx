@@ -52,8 +52,6 @@ export default function Login() {
       );
       setFormError({});
 
-      console.log(12);
-
       const resultAction = await dispatch(login(userData));
 
       if (login.fulfilled.match(resultAction)) {

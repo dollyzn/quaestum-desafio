@@ -236,8 +236,6 @@ export default function UsersTab() {
         }
       }
     } catch (error: any) {
-      console.log(error);
-
       const errors: Errors = {};
 
       if (error instanceof Yup.ValidationError) {

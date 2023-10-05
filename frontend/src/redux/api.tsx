@@ -10,10 +10,14 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response.status === 401) {
-      error.code = "UNAUTHORIZED";
-    } else {
-      console.error("Erro inesperado:", error.message);
+    switch (error.response.status) {
+      case 401:
+        error.code = "UNAUTHORIZED";
+        break;
+
+      default:
+        console.error("Erro inesperado:", error);
+        break;
     }
 
     return Promise.reject(error);
